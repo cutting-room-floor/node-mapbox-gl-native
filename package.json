@@ -26,7 +26,8 @@
     "node-pre-gyp"
   ],
   "scripts": {
-    "install": "node-pre-gyp install --fallback-to-build"
+    "install": "node-pre-gyp install --fallback-to-build",
+    "test": "tap ./test"
   },
   "binary": {
     "module_name": "mapbox-gl-native",
@@ -34,5 +35,8 @@
     "host": "https://mapbox-node-binary.s3.amazonaws.com",
     "remote_path": "./{name}/v{version}",
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+  },
+  "devDependencies": {
+    "tap": "^0.4.12"
   }
 }
