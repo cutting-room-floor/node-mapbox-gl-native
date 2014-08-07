@@ -1,10 +1,5 @@
-var mbgl = require('bindings')('mbgl')
+var mbgl = require('bindings')('mapbox-gl-native')
 
-var x = 0,
-    y = 0,
-    z = 0;
-
-mbgl.renderTile(x, y, z, function(tileImage) {
-    console.log(tileImage);
+mbgl.renderTile(0, 0, 0, function(err, tile) {
+    console.log(tile);
 });
-

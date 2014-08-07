@@ -3,7 +3,9 @@
     {
       'target_name': '<(module_name)',
       "sources": [
-        "src/node_mbgl.cpp"
+        "src/node_mbgl.cpp",
+        "src/render_tile.cpp",
+        "src/tile_worker.cpp"
       ],
       "include_dirs": [
         "include",
