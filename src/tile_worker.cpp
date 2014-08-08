@@ -1,18 +1,45 @@
 #include <node_mbgl/tile_worker.hpp>
 
+// #include <mbgl/map/map.hpp>
+
+// #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
+
 namespace node_mbgl
 {
 
-TileWorker::TileWorker(int x, int y, int z, NanCallback *callback)
+TileWorker::TileWorker(const std::string &style,
+                       const std::string &tile,
+                       NanCallback *callback)
     : NanAsyncWorker(callback),
-      x(x),
-      y(y),
-      z(z) {}
+      style(style),
+      tile(tile) {}
 
 TileWorker::~TileWorker() {}
 
 void TileWorker::Execute() {
-    tile = "Hello world.";
+    // Setup OpenGL
+    // mbgl::HeadlessView view;
+    // mbgl::Map map(view);
+
+    image = "Hello world.";
+
+    /*
+    map.setStyleJSON(style);
+    map.setAppliedClasses(classes);
+
+    view.resize(width, height);
+    map.resize(width, height);
+    map.setLonLatZoom(longitude, latitude, zoom);
+    map.setBearing(bearing);
+
+    // Run the loop. It will terminate when we don't have any further listeners.
+    map.run();
+
+    const std::unique_ptr<uint32_t[]> pixels(new uint32_t[width * height]);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.get());
+
+    image = util::compress_png(width, height, pixels.get(), true);
+    */
 }
 
 void TileWorker::HandleOKCallback() {
@@ -20,7 +47,7 @@ void TileWorker::HandleOKCallback() {
 
     v8::Local<v8::Value> argv[] = {
         NanNull(),
-        NanNew<v8::String>(tile)
+        NanNew<v8::String>(image)
     };
 
     callback->Call(2, argv);

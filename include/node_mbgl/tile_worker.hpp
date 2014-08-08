@@ -11,17 +11,19 @@ namespace node_mbgl
 
 class TileWorker : public NanAsyncWorker {
 public:
-    TileWorker(int x, int y, int z, NanCallback *callback);
+    TileWorker(const std::string &style,
+               const std::string &tile,
+               NanCallback *callback);
     ~TileWorker();
 
     void Execute();
     void HandleOKCallback();
 
 private:
-    int x;
-    int y;
-    int z;
-    std::string tile;
+    const std::string style; 
+    const std::string tile; 
+
+    std::string image;
 };
 
 } // ns node_mbgl

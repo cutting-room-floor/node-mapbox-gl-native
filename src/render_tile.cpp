@@ -7,13 +7,18 @@ namespace node_mbgl
 NAN_METHOD(RenderTile) {
     NanScope();
 
-    int x = args[0].As<v8::Number>()->IntegerValue();
-    int y = args[1].As<v8::Number>()->IntegerValue();
-    int z = args[2].As<v8::Number>()->IntegerValue();
+    const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
 
-    NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
+    if (!node::Buffer::HasInstance(args[1])) {
+        ThrowException (v8::Exception::TypeError(
+              v8::String::New("Second argument must be a buffer.")));
+    } 
 
-    NanAsyncQueueWorker(new TileWorker(x, y, z, callback));
+    char* tile(node::Buffer::Data(args[1]->ToObject()));
+
+    NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+
+    NanAsyncQueueWorker(new TileWorker(style, tile, callback));
     NanReturnUndefined();
 };
 

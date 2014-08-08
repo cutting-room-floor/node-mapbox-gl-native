@@ -4,9 +4,11 @@ var test = require('tap').test;
 test('hello', function(t) {
     t.plan(3);
 
-    mbgl.renderTile(0, 0, 0, function(err, tile) {
+    var buffer = new Buffer("buffer");
+
+    mbgl.renderTile(buffer.toString(), buffer, function(err, image) {
         t.type(err, 'null', 'no error');
-        t.type(tile, 'string', 'type of tile is string');
-        t.equal(tile, 'Hello world.', 'tile should equal "Hello world."');
+        t.type(image, 'string', 'type of image is string');
+        t.equal(image, 'Hello world.', 'image should equal "Hello world."');
     });
 });

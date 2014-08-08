@@ -37,6 +37,8 @@
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "devDependencies": {
+    "mapbox-gl-styles": "0.0.1",
+    "mapbox-gl-test-suite": "0.0.0",
     "tap": "^0.4.12"
   }
 }

@@ -3,13 +3,13 @@
     {
       'target_name': '<(module_name)',
       "sources": [
-        "src/node_mbgl.cpp",
-        "src/render_tile.cpp",
-        "src/tile_worker.cpp"
+        'src/node_mbgl.cpp',
+        'src/render_tile.cpp',
+        'src/tile_worker.cpp'
       ],
       "include_dirs": [
-        "include",
-        "vendor/mapbox-gl-native/include",
+        'include',
+        'vendor/mapbox-gl-native/include',
         "<!(node -e \"require('nan')\")"
       ],
       'xcode_settings': {
