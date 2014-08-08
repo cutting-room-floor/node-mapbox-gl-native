@@ -2,7 +2,7 @@
 
 // #include <mbgl/map/map.hpp>
 
-// #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
+#include "../vendor/mapbox-gl-native/common/headless_view.hpp"
 
 namespace node_mbgl
 {
@@ -18,7 +18,7 @@ TileWorker::~TileWorker() {}
 
 void TileWorker::Execute() {
     // Setup OpenGL
-    // mbgl::HeadlessView view;
+    mbgl::HeadlessView view;
     // mbgl::Map map(view);
 
     image = "Hello world.";

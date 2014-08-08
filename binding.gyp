@@ -5,7 +5,8 @@
       "sources": [
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
-        'src/tile_worker.cpp'
+        'src/tile_worker.cpp',
+        'vendor/mapbox-gl-native/common/headless_view.cpp'
       ],
       "include_dirs": [
         'include',
