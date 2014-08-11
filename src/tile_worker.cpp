@@ -1,8 +1,8 @@
 #include <node_mbgl/tile_worker.hpp>
 
-// #include <mbgl/map/map.hpp>
-
 #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
+
+// #include <mbgl/map/map.hpp>
 
 namespace node_mbgl
 {
@@ -21,8 +21,6 @@ void TileWorker::Execute() {
     mbgl::HeadlessView view;
     // mbgl::Map map(view);
 
-    image = "Hello world.";
-
     /*
     map.setStyleJSON(style);
     map.setAppliedClasses(classes);
@@ -40,6 +38,8 @@ void TileWorker::Execute() {
 
     image = util::compress_png(width, height, pixels.get(), true);
     */
+
+    image = "Hello world.";
 }
 
 void TileWorker::HandleOKCallback() {
