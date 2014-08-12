@@ -7,15 +7,25 @@
         'src/render_tile.cpp',
         'src/tile_worker.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
+        'vendor/mapbox-gl-native/src/map/map.cpp',
       ],
       "include_dirs": [
         'include',
         'vendor/mapbox-gl-native/include',
-        "<!(node -e \"require('nan')\")"
+        '<!@(pkg-config libuv --cflags-only-I | sed s/-I//g)',
+        "<!(node -e \"require('nan')\")",
+      ],
+      'libraries': [
+        '<!@(pkg-config libuv --libs --static)',
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',
-          'OTHER_CPLUSPLUSFLAGS': ['-Wshadow','-std=c++11', '-stdlib=libc++', '-Wno-unused-variable'],
+          'OTHER_CPLUSPLUSFLAGS': [
+              '-Wshadow',
+              '-std=c++11',
+              '-stdlib=libc++',
+              '-Wno-unused-variable',
+          ],
           'GCC_ENABLE_CPP_RTTI': 'YES',
           'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
       },

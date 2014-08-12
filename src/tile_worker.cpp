@@ -1,7 +1,6 @@
 #include <node_mbgl/tile_worker.hpp>
 
 #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
-
 #include <mbgl/map/map.hpp>
 
 namespace node_mbgl
@@ -19,7 +18,7 @@ TileWorker::~TileWorker() {}
 void TileWorker::Execute() {
     // Setup OpenGL
     mbgl::HeadlessView view;
-    // mbgl::Map map(view);
+    mbgl::Map map(view);
 
     /*
     map.setStyleJSON(style);
