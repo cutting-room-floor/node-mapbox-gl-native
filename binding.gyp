@@ -1,22 +1,30 @@
 {
   "targets": [
     {
+      'target_name': 'action_before_build',
+      'type': 'none',
+      'copies': [
+          {
+            'files': [ 'vendor/mapbox-gl-native/build/Release/libmapboxgl.a' ],
+            'destination': '<(SHARED_INTERMEDIATE_DIR)'
+          }
+      ]
+    },
+    {
       'target_name': '<(module_name)',
+      'dependencies': [ 'action_before_build' ],
       "sources": [
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
         'src/tile_worker.cpp',
-        'vendor/mapbox-gl-native/common/headless_view.cpp',
-        'vendor/mapbox-gl-native/src/map/map.cpp',
       ],
       "include_dirs": [
         'include',
         'vendor/mapbox-gl-native/include',
-        '<!@(pkg-config libuv --cflags-only-I | sed s/-I//g)',
         "<!(node -e \"require('nan')\")",
       ],
       'libraries': [
-        '<!@(pkg-config libuv --libs --static)',
+        '<(SHARED_INTERMEDIATE_DIR)/libmapboxgl.a',
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',
