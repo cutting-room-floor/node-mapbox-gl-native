@@ -5,7 +5,9 @@
       'type': 'none',
       'copies': [
           {
-            'files': [ 'vendor/mapbox-gl-native/build/Release/libmapboxgl.a' ],
+            'files': [
+                'vendor/mapbox-gl-native/build/Release/libmapboxgl.a'
+            ],
             'destination': '<(SHARED_INTERMEDIATE_DIR)'
           }
       ]
@@ -17,10 +19,12 @@
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
         'src/tile_worker.cpp',
+        'vendor/mapbox-gl-native/common/headless_view.cpp',
       ],
       "include_dirs": [
         'include',
         'vendor/mapbox-gl-native/include',
+        'vendor/mapbox-gl-native/common',
         "<!(node -e \"require('nan')\")",
       ],
       'libraries': [
