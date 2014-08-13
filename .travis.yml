@@ -1,28 +1,38 @@
-os:
-- linux
-- osx
 language: cpp
+
+os:
+  - linux
+  - osx
+
 compiler:
-- gcc
+  - gcc
+  - clang
+
 env:
   matrix:
   - NODE_NVM_VERSION="0.10"
   - NODE_NVM_VERSION="0.11"
-before_install:
-- export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
-- export PATH="$BUILD/bin:$PATH"
-- if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
-- git clone https://github.com/creationix/nvm.git ../.nvm
-- source ../.nvm/nvm.sh
-- nvm install $NODE_NVM_VERSION
-- nvm use $NODE_NVM_VERSION
-- node --version
-- npm --version
-- ./scripts/travis_setup.sh
-install:
-- npm install --build-from-source
-script:
-- npm test
-after_success:
-- ./scripts/travis_publish.sh
 
+before_install:
+  - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
+  - export PATH="$BUILD/bin:$PATH"
+  - if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
+  - git clone https://github.com/creationix/nvm.git ../.nvm
+  - source ../.nvm/nvm.sh
+  - nvm install $NODE_NVM_VERSION
+  - nvm use $NODE_NVM_VERSION
+  - node --version
+  - npm --version
+  - ./scripts/travis_setup.sh
+
+install:
+  - npm install --build-from-source
+
+script:
+  - npm test
+
+after_success:
+  - ./scripts/travis_publish.sh
+
+git:
+  submodules: true
