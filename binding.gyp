@@ -1,7 +1,25 @@
 {
   "targets": [
     {
+      'target_name': 'make_mbgl',
+      'type': 'none',
+      'hard_dependency': 1,
+      'actions': [
+        {
+          'action_name': 'make_mbgl',
+          'inputs': [
+            'vendor/mapbox-gl-native',
+          ],
+          'outputs': [
+            'vendor/mapbox-gl-native/build/Release/libmapboxgl.a',
+          ],
+          'action': ['./scripts/make_mbgl.sh']
+        }
+      ]
+    },
+    {
       'target_name': 'action_before_build',
+      'dependencies': [ 'make_mbgl' ],
       'type': 'none',
       'copies': [
           {
