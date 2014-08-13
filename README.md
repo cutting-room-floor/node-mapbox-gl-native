@@ -2,7 +2,7 @@
 
 A library that renders map tiles in OpenGL using [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native).
 
-[![Build Status](https://secure.travis-ci.org/mapbox/node-mapbox-gl-native.png)](https://travis-ci.org/mapbox/node-mapbox-gl-native)
+[![Build Status](https://api.travis-ci.com/mapbox/node-mapbox-gl-native.svg?token=Phdq58g7NsfstW6gyeYW)](https://magnum.travis-ci.com/mapbox/node-mapbox-gl-native)
 
 ## API
 ```
