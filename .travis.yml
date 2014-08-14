@@ -14,6 +14,7 @@ env:
 
 before_install:
   - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
+  - echo $TRAVIS_OS_NAME
   - export TRAVIS_OS_NAME=${platform}
   - ./vendor/mapbox-gl-native/scripts/setup_travis.sh
   - source ./vendor/mapbox-gl-native/scripts/flags.sh
