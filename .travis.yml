@@ -10,7 +10,6 @@ compiler:
 env:
   matrix:
   - NODE_NVM_VERSION="0.10"
-  - NODE_NVM_VERSION="0.11"
 
 before_install:
   - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
