@@ -23,7 +23,8 @@ before_install:
   - nvm use $NODE_NVM_VERSION
   - node --version
   - npm --version
-  - ./scripts/travis_setup.sh
+  - export TRAVIS_OS_NAME=${platform}
+  - ./vendor/mapbox-gl-native/scripts/setup_travis.sh
 
 install:
   - npm install --build-from-source
