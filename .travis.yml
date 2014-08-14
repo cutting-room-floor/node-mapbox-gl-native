@@ -2,7 +2,6 @@ language: cpp
 
 os:
   - linux
-  - osx
 
 compiler:
   - gcc
@@ -15,16 +14,10 @@ env:
 
 before_install:
   - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
-  - export PATH="$BUILD/bin:$PATH"
-  - if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
-  - git clone https://github.com/creationix/nvm.git ../.nvm
-  - source ../.nvm/nvm.sh
-  - nvm install $NODE_NVM_VERSION
-  - nvm use $NODE_NVM_VERSION
-  - node --version
-  - npm --version
   - export TRAVIS_OS_NAME=${platform}
   - ./vendor/mapbox-gl-native/scripts/setup_travis.sh
+  - source ./vendor/mapbox-gl-native/scripts/flags.sh
+  - ./scripts/nvm_install.sh
 
 install:
   - npm install --build-from-source

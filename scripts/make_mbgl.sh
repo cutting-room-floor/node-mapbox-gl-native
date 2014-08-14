@@ -5,5 +5,6 @@ set -o pipefail
 
 cd vendor/mapbox-gl-native
 make setup
-make mbgl
+rm -rf mapnik-packaging/out/packages
+make mbgl -j4
 cd ../../
