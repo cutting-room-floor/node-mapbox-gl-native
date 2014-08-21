@@ -29,7 +29,7 @@
       "include_dirs": [
         'include',
         'vendor/mapbox-gl-native/include',
-        'vendor/mapbox-gl-native/common',
+        'vendor/mapbox-gl-native/common/headless_view.hpp',
         "<!(node -e \"require('nan')\")",
       ],
       'libraries': [
