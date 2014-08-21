@@ -1,8 +1,8 @@
 {
   "targets": [
     {
-      'target_name': 'action_before_build',
-      'type': 'static_library',
+      'target_name': 'libmapboxgl',
+      'type': 'none',
       'hard_dependency': 1,
       'actions': [
         {
@@ -11,7 +11,7 @@
             'vendor/mapbox-gl-native',
           ],
           'outputs': [
-            'vendor/mapbox-gl-native/build/Release/libmapboxgl.a',
+            'vendor/mapbox-gl-native/build/Release',
           ],
           'action': ['./scripts/make_mbgl.sh']
         }
@@ -19,7 +19,7 @@
     },
     {
       'target_name': '<(module_name)',
-      'dependencies': [ 'action_before_build' ],
+      'dependencies': [ 'libmapboxgl' ],
       "sources": [
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
@@ -32,7 +32,7 @@
         "<!(node -e \"require('nan')\")",
       ],
       'libraries': [
-        'vendor/mapbox-gl-native/build/Release/libmapboxgl.a',
+        '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',

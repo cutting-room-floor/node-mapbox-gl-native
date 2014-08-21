@@ -6,6 +6,3 @@ set -o pipefail
 cd vendor/mapbox-gl-native
 make setup
 CXX11=true make mbgl
-
-pwd
-ls -la build/Release
