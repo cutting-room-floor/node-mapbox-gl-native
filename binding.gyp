@@ -20,7 +20,6 @@
           }, {
             'link_settings': {
               'libraries': [
-                '>!@(pkg-config vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/pkgconfig/glfw3.pc --libs --static | sed s/.*-framework/-framework/g)',
                 '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libboost_regex.a',
               ],
             },
@@ -57,6 +56,7 @@
       'conditions': [
         ['OS=="linux"', {
           'libraries': [
+            '>!@(pkg-config vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/pkgconfig/glfw3.pc --libs --static | sed s/.*-framework/-framework/g)',
             '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
           ],
         }],
