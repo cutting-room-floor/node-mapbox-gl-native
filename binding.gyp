@@ -5,26 +5,26 @@
       'type': 'none',
       'hard_dependency': 1,
       'direct_dependent_settings': {
-          'conditions': [
-              ['OS == "mac"', {
-                  'link_settings': {
-                      'libraries': [
-                          '-framework OpenGL',
-                      ],
-                  },
-                  'xcode_settings': {
-                      'OTHER_LDFLAGS': [
-                          '-framework OpenGL',
-                      ],
-                  },
-              }, {
-                  'link_settings': {
-                      'libraries': [
-                        '-lboost_regex',
-                      ],
-                  },
-              }],
-          ],
+        'conditions': [
+          ['OS == "mac"', {
+            'link_settings': {
+              'libraries': [
+                '-framework OpenGL',
+              ],
+            },
+            'xcode_settings': {
+              'OTHER_LDFLAGS': [
+                '-framework OpenGL',
+              ],
+            },
+          }, {
+            'link_settings': {
+              'libraries': [
+                'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libboost_regex.a'
+              ],
+            },
+          }],
+        ],
       },
       'actions': [
         {
