@@ -5,4 +5,4 @@ set -o pipefail
 
 cd vendor/mapbox-gl-native
 make setup
-CXX11=true make mbgl
+CXX11=true CXXFLAGS="-fPIC" make mbgl
