@@ -1,5 +1,5 @@
 {
-  "targets": [
+  'targets': [
     {
       'target_name': 'libmapboxgl',
       'type': 'none',
@@ -20,19 +20,28 @@
     {
       'target_name': '<(module_name)',
       'dependencies': [ 'libmapboxgl' ],
-      "sources": [
+      'sources': [
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
         'src/tile_worker.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
       ],
-      "include_dirs": [
+      'include_dirs': [
         'include',
         'vendor/mapbox-gl-native/include',
-        "<!(node -e \"require('nan')\")",
+        '<!(node -e \"require(\'nan\')\")',
       ],
-      'libraries': [
-        '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
+      'conditions': [
+        ['OS=="linux"', {
+          'libraries': [
+            '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
+          ],
+        }],
+        ['OS=="mac"', {
+          'libraries': [
+            '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
+          ],
+        }],
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',
