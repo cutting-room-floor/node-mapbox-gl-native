@@ -8,5 +8,6 @@ make setup
 CXX11=true make mbgl
 
 pwd
-ls -la
-ls -la ../../
+ls -la build
+ls -la build/Release
+ls -la ../../build
