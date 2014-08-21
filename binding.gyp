@@ -41,13 +41,12 @@
               '-std=c++11',
               '-stdlib=libc++',
               '-Wno-unused-variable',
-              '-Wno-error=unused-command-line-argument-hard-error-in-future'
           ],
           'GCC_ENABLE_CPP_RTTI': 'YES',
           'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
       },
       'cflags_cc!': ['-fno-rtti', '-fno-exceptions'],
-      'cflags_cc' : ['-std=c++11','-Wshadow','-Wno-error=unused-command-line-argument-hard-error-in-future'],
+      'cflags_cc' : ['-std=c++11','-Wshadow'],
       'cflags_c' : ['-std=c99']
     },
     {
