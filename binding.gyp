@@ -4,18 +4,6 @@
       'target_name': 'libmapboxgl',
       'type': 'none',
       'hard_dependency': 1,
-      'actions': [
-        {
-          'action_name': 'make_mbgl',
-          'inputs': [
-            'vendor/mapbox-gl-native',
-          ],
-          'outputs': [
-            'vendor/mapbox-gl-native/build/Release',
-          ],
-          'action': ['./scripts/make_mbgl.sh']
-        }
-      ],
       'direct_dependent_settings': {
         'conditions': [
           ['OS == "mac"', {
@@ -39,6 +27,18 @@
           }],
         ],
       },
+      'actions': [
+        {
+          'action_name': 'make_mbgl',
+          'inputs': [
+            'vendor/mapbox-gl-native',
+          ],
+          'outputs': [
+            'vendor/mapbox-gl-native/build/Release',
+          ],
+          'action': ['./scripts/make_mbgl.sh']
+        }
+      ]
     },
     {
       'target_name': '<(module_name)',
