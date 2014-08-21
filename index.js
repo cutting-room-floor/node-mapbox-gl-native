@@ -1,1 +1,1 @@
-module.exports = require('bindings')('mapbox-gl-native');
+module.exports = require('./lib/mapbox-gl-native');
