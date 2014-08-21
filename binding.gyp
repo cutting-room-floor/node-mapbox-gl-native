@@ -4,6 +4,29 @@
       'target_name': 'libmapboxgl',
       'type': 'none',
       'hard_dependency': 1,
+      'direct_dependent_settings': {
+          'conditions': [
+              ['OS == "mac"', {
+                  'link_settings': {
+                      'libraries': [
+                          '-framework OpenGL',
+                      ],
+                  },
+                  'xcode_settings': {
+                      'OTHER_LDFLAGS': [
+                          '-framework OpenGL',
+                      ],
+                  },
+              }, {
+                  'link_settings': {
+                      'libraries': [
+                        '<@(glfw3_libraries)', # This is a hack since we're not actually using GLFW
+                        '-lboost_regex',
+                      ],
+                  },
+              }],
+          ],
+      },
       'actions': [
         {
           'action_name': 'make_mbgl',
