@@ -21,6 +21,7 @@
             'link_settings': {
               'libraries': [
                 '-lX11',
+                '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libglfw3.a',
                 '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libboost_regex.a',
               ],
             },
