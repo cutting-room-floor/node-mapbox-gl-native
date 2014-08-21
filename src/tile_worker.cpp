@@ -1,7 +1,7 @@
 #include <node_mbgl/tile_worker.hpp>
 
-#include "../vendor/mapbox-gl-native/common/headless_view.hpp"
 #include <mbgl/map/map.hpp>
+#include "../vendor/mapbox-gl-native/common/headless_view.hpp"
 
 namespace node_mbgl
 {
