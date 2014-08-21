@@ -11,7 +11,7 @@
             'vendor/mapbox-gl-native',
           ],
           'outputs': [
-            'vendor/mapbox-gl-native/build/Release/libmapboxgl.a',
+            '<(PRODUCT_DIR)/libmapboxgl.a',
           ],
           'action': ['./scripts/make_mbgl.sh']
         }
@@ -32,7 +32,7 @@
         "<!(node -e \"require('nan')\")",
       ],
       'libraries': [
-        '../vendor/mapbox-gl-native/build/Release/libmapboxgl.a',
+        '<(PRODUCT_DIR)/libmapboxgl.a',
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',

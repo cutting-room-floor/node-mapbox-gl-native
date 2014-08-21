@@ -6,4 +6,4 @@ set -o pipefail
 cd vendor/mapbox-gl-native
 make setup
 CXX11=true make mbgl
-cd ../../
+cp build/Release/libmapboxgl.a ../../build/Release/
