@@ -20,7 +20,6 @@
               }, {
                   'link_settings': {
                       'libraries': [
-                        '<@(glfw3_libraries)', # This is a hack since we're not actually using GLFW
                         '-lboost_regex',
                       ],
                   },
