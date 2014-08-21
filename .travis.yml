@@ -23,7 +23,7 @@ before_install:
 - "./scripts/nvm_install.sh"
 
 install:
-- npm install --build-from-source
+- npm install --build-from-source --clang
 
 script:
 - npm test
