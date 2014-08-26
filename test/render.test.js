@@ -4,7 +4,6 @@
 
 var test = require('tape').test;
 var mbgl = require('../index.js');
-var PNG = require('pngjs').PNG;
 var fs = require('fs');
 var st = require('st');
 var path = require('path');
@@ -20,10 +19,13 @@ test('before render', function(t) {
 
 function renderTest(style, info, dir) {
     return function (t) {
-
         mbgl.renderTile(style, info, function(err, image) {
-            if (!err) rendered();
-            t.fail(err);
+            if (err) t.fail(err);
+
+            mkdirp.sync(dir);
+
+            fs.createWriteStream(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'))
+                .on('finish', t.end);
         });
 
         /*
@@ -34,35 +36,6 @@ function renderTest(style, info, dir) {
         t.once('end', function() {
             clearTimeout(watchdog);
         });
-
-        function rendered() {
-            for (var id in map.sources)
-                if (!map.sources[id].loaded())
-                    return;
-            if (map.style.sprite && !map.style.sprite.loaded())
-                return;
-
-            var png = new PNG({width: width, height: height});
-
-            gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, png.data);
-
-            // Flip the scanlines.
-            var stride = width * 4;
-            var tmp = new Buffer(stride);
-            for (var i = 0, j = height - 1; i < j; i++, j--) {
-                var start = i * stride;
-                var end = j * stride;
-                png.data.copy(tmp, 0, start, start + stride);
-                png.data.copy(png.data, start, end, end + stride);
-                tmp.copy(png.data, end);
-            }
-
-            mkdirp.sync(dir);
-
-            png.pack()
-                .pipe(fs.createWriteStream(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png')))
-                .on('finish', t.end);
-        }
         */
     };
 }
