@@ -35,13 +35,11 @@ void TileWorker::Execute() {
     style = buffer.GetString();
 
     // Parse settings.
-    rapidjson::Document infoDoc;
-    infoDoc.Parse<0>((const char *const)info.c_str());
+    rapidjson::Document value;
+    value.Parse<0>((const char *const)info.c_str());
     // ASSERT_EQ(false, infoDoc.HasParseError());
     // ASSERT_EQ(true, infoDoc.IsObject());
     
-    const rapidjson::Value &value = infoDoc;
-    // ASSERT_EQ(true, value.IsObject());
     // if (value.HasMember("center")) ASSERT_EQ(true, value["center"].IsArray());
 
     // Setup OpenGL

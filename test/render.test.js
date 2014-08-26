@@ -19,16 +19,17 @@ test('before render', function(t) {
 
 function renderTest(style, info, dir) {
     return function (t) {
-        mbgl.renderTile(style, info, function(err, image) {
+        mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), function(err, image) {
             if (err) t.fail(err);
 
             mkdirp.sync(dir);
 
-            fs.createWriteStream(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'))
-                .on('finish', t.end);
+            fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
+                if (err) t.fail(err);
+                t.end();
+            });
         });
 
-        /*
         var watchdog = setTimeout(function() {
             t.fail('timed out after 4 seconds');
         }, 4000);
@@ -36,7 +37,6 @@ function renderTest(style, info, dir) {
         t.once('end', function() {
             clearTimeout(watchdog);
         });
-        */
     };
 }
 

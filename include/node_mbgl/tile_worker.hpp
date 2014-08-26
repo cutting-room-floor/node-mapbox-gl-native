@@ -21,7 +21,7 @@ public:
 
 private:
     std::string style; 
-    const std::string info; 
+    std::string info; 
     std::string image;
 };
 
