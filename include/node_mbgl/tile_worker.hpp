@@ -12,7 +12,7 @@ namespace node_mbgl
 class TileWorker : public NanAsyncWorker {
 public:
     TileWorker(const std::string &style,
-               const std::string &tile,
+               const std::string &info,
                NanCallback *callback);
     ~TileWorker();
 
@@ -20,9 +20,8 @@ public:
     void HandleOKCallback();
 
 private:
-    const std::string style; 
-    const std::string tile; 
-
+    std::string style; 
+    const std::string info; 
     std::string image;
 };
 

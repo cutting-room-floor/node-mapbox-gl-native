@@ -6,22 +6,27 @@ var test = require('tape').test;
 var mbgl = require('../index.js');
 var PNG = require('pngjs').PNG;
 var fs = require('fs');
+var st = require('st');
 var path = require('path');
 var http = require('http');
 var mkdirp = require('mkdirp');
 
-var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
+var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json')),
+    server = http.createServer(st({path: suitePath}));
+
+test('before render', function(t) {
+    server.listen(2900, t.end);
+});
 
 function renderTest(style, info, dir) {
     return function (t) {
-        var width = info.width || 512,
-            height = info.height || 512;
 
-        mbgl.renderTile(buffer.toString(), buffer, function(err, image) {
+        mbgl.renderTile(style, info, function(err, image) {
             if (!err) rendered();
             t.fail(err);
         });
 
+        /*
         var watchdog = setTimeout(function() {
             t.fail('timed out after 4 seconds');
         }, 4000);
@@ -36,8 +41,6 @@ function renderTest(style, info, dir) {
                     return;
             if (map.style.sprite && !map.style.sprite.loaded())
                 return;
-
-            map.off('render', rendered);
 
             var png = new PNG({width: width, height: height});
 
@@ -60,6 +63,7 @@ function renderTest(style, info, dir) {
                 .pipe(fs.createWriteStream(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png')))
                 .on('finish', t.end);
         }
+        */
     };
 }
 
@@ -84,6 +88,10 @@ fs.readdirSync(path.join(suitePath, 'tests')).forEach(function(dir) {
     }
 
     for (k in info) {
-        (info[k].js === false ? test.skip : test)(dir + ' ' + k, renderTest(style, info[k], path.join(suitePath, 'tests', dir, k)));
+        test(dir + ' ' + k, renderTest(style, info[k], path.join(suitePath, 'tests', dir, k)));
     }
+});
+
+test('after render', function(t) {
+    server.close(t.end);
 });
