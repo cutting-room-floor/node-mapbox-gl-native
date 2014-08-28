@@ -17,26 +17,26 @@ TileWorker::TileWorker(const std::string &style,
                        const std::string &info,
                        NanCallback *callback)
     : NanAsyncWorker(callback),
-      style(style),
-      info(info) {}
+      style_(style),
+      info_(info) {}
 
 TileWorker::~TileWorker() {}
 
 void TileWorker::Execute() {
     // Parse style.
     rapidjson::Document styleDoc;
-    styleDoc.Parse<0>((const char *const)style.c_str());
+    styleDoc.Parse<0>((const char *const)style_.c_str());
     // ASSERT_EQ(false, styleDoc.HasParseError());
     // ASSERT_EQ(true, styleDoc.IsObject());
 
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     styleDoc.Accept(writer);
-    style = buffer.GetString();
+    style_ = buffer.GetString();
 
     // Parse settings.
     rapidjson::Document value;
-    value.Parse<0>((const char *const)info.c_str());
+    value.Parse<0>((const char *const)info_.c_str());
     // ASSERT_EQ(false, infoDoc.HasParseError());
     // ASSERT_EQ(true, infoDoc.IsObject());
     
@@ -63,7 +63,7 @@ void TileWorker::Execute() {
         }
     }
 
-    map.setStyleJSON(style);
+    map.setStyleJSON(style_);
     map.setAppliedClasses(classes);
 
     view.resize(width, height);
@@ -77,7 +77,7 @@ void TileWorker::Execute() {
     const std::unique_ptr<uint32_t[]> pixels(new uint32_t[width * height]);
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.get());
 
-    image = mbgl::util::compress_png(width, height, pixels.get(), true);
+    image_ = mbgl::util::compress_png(width, height, pixels.get(), true);
 }
 
 void TileWorker::HandleOKCallback() {
@@ -85,7 +85,7 @@ void TileWorker::HandleOKCallback() {
 
     v8::Local<v8::Value> argv[] = {
         NanNull(),
-        NanNew<v8::String>(image)
+        NanNew<v8::String>(image_)
     };
 
     callback->Call(2, argv);

@@ -26,12 +26,14 @@ function renderTest(style, info, dir) {
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
                 if (err) t.fail(err);
+                t.pass('generated image');
                 t.end();
             });
         });
 
         var watchdog = setTimeout(function() {
             t.fail('timed out after 4 seconds');
+            t.end();
         }, 4000);
 
         t.once('end', function() {

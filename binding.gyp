@@ -48,16 +48,17 @@
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
         'src/tile_worker.cpp',
-        'vendor/mapbox-gl-native/common/curl_request.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
+        'vendor/mapbox-gl-native/common/curl_request.cpp',
       ],
       'include_dirs': [
         'include',
         'vendor/mapbox-gl-native/include',
+        'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include',
         '<!(node -e \"require(\'nan\')\")',
       ],
       'libraries': [
-        '<!@(pkg-config libpng --libs --static)',
+        '<!@(pkg-config vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/pkgconfig/libpng.pc --libs --static)',
       ],
       'conditions': [
         ['OS=="linux"', {

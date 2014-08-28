@@ -20,9 +20,9 @@ public:
     void HandleOKCallback();
 
 private:
-    std::string style; 
-    std::string info; 
-    std::string image;
+    std::string style_; 
+    std::string info_; 
+    std::string image_;
 };
 
 } // ns node_mbgl
