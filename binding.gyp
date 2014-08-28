@@ -47,7 +47,6 @@
       'sources': [
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
-        'src/tile_worker.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
         'vendor/mapbox-gl-native/common/curl_request.cpp',
       ],
