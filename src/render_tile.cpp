@@ -9,6 +9,9 @@
 #include <rapidjson/stringbuffer.h>
 
 #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
+#include "../vendor/mapbox-gl-native/test/fixtures/fixture_log.hpp"
+
+#include <iostream>
 
 namespace node_mbgl
 {
@@ -18,6 +21,7 @@ NAN_METHOD(RenderTile) {
 
     std::string style_(*v8::String::Utf8Value(args[0].As<v8::String>()));
     const std::string info_(*v8::String::Utf8Value(args[1].As<v8::String>()));
+    const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
 
     // Parse style.
     rapidjson::Document styleDoc;
@@ -37,6 +41,8 @@ NAN_METHOD(RenderTile) {
     // ASSERT_EQ(true, infoDoc.IsObject());
     
     // if (value.HasMember("center")) ASSERT_EQ(true, value["center"].IsArray());
+
+    mbgl::Log::Set<mbgl::FixtureLogBackend>();
 
     // Setup OpenGL
     mbgl::HeadlessView view;
@@ -59,7 +65,7 @@ NAN_METHOD(RenderTile) {
         }
     }
 
-    map.setStyleJSON(style_);
+    map.setStyleJSON(style_, base_directory);
     map.setAppliedClasses(classes);
 
     view.resize(width, height);

@@ -5,17 +5,11 @@
 var test = require('tape').test;
 var mbgl = require('../index.js');
 var fs = require('fs');
-var st = require('st');
 var path = require('path');
 var http = require('http');
 var mkdirp = require('mkdirp');
 
-var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json')),
-    server = http.createServer(st({path: suitePath}));
-
-test('before render', function(t) {
-    server.listen(2900, t.end);
-});
+var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
 
 function renderTest(style, info, dir) {
     return function (t) {
@@ -28,7 +22,7 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info));
+        var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
 
         mkdirp.sync(dir);
 
@@ -48,23 +42,19 @@ fs.readdirSync(path.join(suitePath, 'tests')).forEach(function(dir) {
 
     for (var k in style.sources) {
         for (var l in style.sources[k].tiles) {
-            style.sources[k].tiles[l] = style.sources[k].tiles[l].replace(/^local:\/\//, 'http://localhost:2900/');
+            style.sources[k].tiles[l] = style.sources[k].tiles[l].replace(/^local:\/\//, '');
         }
     }
 
     if (style.sprite) {
-        style.sprite = style.sprite.replace(/^local:\/\//, 'http://localhost:2900/');
+        style.sprite = style.sprite.replace(/^local:\/\//, '');
     }
 
     if (style.glyphs) {
-        style.glyphs = style.glyphs.replace(/^local:\/\//, 'http://localhost:2900/');
+        style.glyphs = style.glyphs.replace(/^local:\/\//, '');
     }
 
-    for (k in info) {
+    for (var k in info) {
         test(dir + ' ' + k, renderTest(style, info[k], path.join(suitePath, 'tests', dir, k)));
     }
-});
-
-test('after render', function(t) {
-    server.close(t.end);
 });
