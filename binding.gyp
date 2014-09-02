@@ -59,7 +59,7 @@
         '<!(node -e \"require(\'nan\')\")',
       ],
       'libraries': [
-        '<!@(pkg-config vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/pkgconfig/libpng.pc --libs --static)',
+        '<!@(pkg-config ./vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/pkgconfig/libpng.pc --libs --static)',
       ],
       'conditions': [
         ['OS=="linux"', {
