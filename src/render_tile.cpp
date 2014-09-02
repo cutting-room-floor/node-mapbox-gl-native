@@ -44,10 +44,6 @@ NAN_METHOD(RenderTile) {
 
     mbgl::Log::Set<mbgl::FixtureLogBackend>();
 
-    // Setup OpenGL
-    mbgl::HeadlessView view;
-    mbgl::Map map(view);
-
     const double zoom = value.HasMember("zoom") ? value["zoom"].GetDouble() : 0;
     const double bearing = value.HasMember("bearing") ? value["bearing"].GetDouble() : 0;
     const double latitude = value.HasMember("center") ? value["center"][rapidjson::SizeType(0)].GetDouble() : 0;
@@ -64,6 +60,9 @@ NAN_METHOD(RenderTile) {
             classes.push_back({ js_class.GetString(), js_class.GetStringLength() });
         }
     }
+
+    mbgl::HeadlessView view;
+    mbgl::Map map(view);
 
     map.setStyleJSON(style_, base_directory);
     map.setAppliedClasses(classes);
