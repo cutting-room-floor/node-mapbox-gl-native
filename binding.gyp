@@ -48,6 +48,7 @@
         'src/node_mbgl.cpp',
         'src/render_tile.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
+        'vendor/mapbox-gl-native/common/platform_default.cpp',
         'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
         'vendor/mapbox-gl-native/test/fixtures/fixture_request.cpp',
       ],
