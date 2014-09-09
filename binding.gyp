@@ -6,6 +6,15 @@
       'hard_dependency': 1,
       'direct_dependent_settings': {
         'conditions': [
+          ['OS == "linux"', {
+            'link_settings': {
+              'libraries': [
+                '-lX11',
+                '-lGL',
+                '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libboost_regex.a',
+              ],
+            },
+          }],
           ['OS == "mac"', {
             'link_settings': {
               'libraries': [
@@ -15,14 +24,6 @@
             'xcode_settings': {
               'OTHER_LDFLAGS': [
                 '-framework OpenGL',
-              ],
-            },
-          }, {
-            'link_settings': {
-              'libraries': [
-                '-lX11',
-                '-lGL',
-                '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libboost_regex.a',
               ],
             },
           }],
@@ -55,7 +56,6 @@
       'include_dirs': [
         'include',
         'vendor/mapbox-gl-native/include',
-        'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include',
         '<!(node -e \"require(\'nan\')\")',
       ],
       'libraries': [
@@ -63,11 +63,17 @@
       ],
       'conditions': [
         ['OS=="linux"', {
+          'include_dirs': [
+            'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/include',
+          ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
           ],
         }],
         ['OS=="mac"', {
+          'include_dirs': [
+            'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include',
+          ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
           ],
