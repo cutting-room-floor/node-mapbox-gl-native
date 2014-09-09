@@ -30,14 +30,14 @@
       },
       'actions': [
         {
-          'action_name': 'make_mbgl',
+          'action_name': 'build_mbgl',
           'inputs': [
             'vendor/mapbox-gl-native',
           ],
           'outputs': [
             'vendor/mapbox-gl-native/build/Release',
           ],
-          'action': ['./scripts/make_mbgl.sh']
+          'action': ['./deps/build_mbgl.sh']
         }
       ]
     },
