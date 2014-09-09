@@ -58,9 +58,6 @@
         'vendor/mapbox-gl-native/include',
         '<!(node -e \"require(\'nan\')\")',
       ],
-      'libraries': [
-        '<!@(pkg-config libpng --libs --static)',
-      ],
       'conditions': [
         ['OS=="linux"', {
           'include_dirs': [
@@ -68,6 +65,7 @@
           ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
+            '-L../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libpng.a',
           ],
         }],
         ['OS=="mac"', {
@@ -76,6 +74,7 @@
           ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
+            '-L../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libpng.a',
           ],
         }],
       ],
