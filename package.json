@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
-    "test": "tap ./test"
+    "test": "node test/render.test.js && (cd ./node_modules/mapbox-gl-test-suite/ && ./bin/compare_images.js)"
   },
   "binary": {
     "module_name": "mapbox-gl-native",
@@ -36,8 +36,9 @@
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   },
   "devDependencies": {
-    "mapbox-gl-styles": "0.0.1",
     "mapbox-gl-test-suite": "mapbox/mapbox-gl-test-suite",
-    "tap": "^0.4.12"
+    "mkdirp": "^0.5.0",
+    "st": "^0.5.1",
+    "tape": "^2.14.0"
   }
 }

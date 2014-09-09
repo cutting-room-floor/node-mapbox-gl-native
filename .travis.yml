@@ -1,35 +1,30 @@
 language: cpp
-
 os:
 - linux
-
+- osx
 compiler:
-- gcc
 - clang
-
+- gcc
 env:
   matrix:
   - NODE_NVM_VERSION="0.10"
   global:
-  - AWS_S3_BUCKET=node-mapbox-gl-native
-  - secure: 2ie/lwLSSUpx9q98geDlT/BxKYExK18i3PIgaPpgojnWPOOYr1S9TQfwggxd4FdU3eUwgq8dxuW9NuH2qmEBYvnB9BTcGSoNhrnpDZ0lrA/dFOArDHEheyLz8XirTauzciq+r1pbF0dld5uVaxZfNzbI6labDZPjf/jjSDgVc4c=
-  - secure: RsEbBA2yhdg2MYvMucJ1mmfm99UjEaC47NcYimy0Fsvzjfoe1vYrSJlYzyb9SIOj2URo8v4sAFWUbD+RTX/5pBgXCzSzEKh6ZZ1Sd7O05sx5dz8M3kRzo4asm9di8kAI842eCW/n6EhlykQBvtgA00os3ivG0Gh6KS/WebMsXsM=
-
+  - PKG_CONFIG_PATH: 'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/pkgconfig:vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/pkgconfig'
+  - AWS_S3_BUCKET: 'node-mapbox-gl-native'
+  - secure: "2ie/lwLSSUpx9q98geDlT/BxKYExK18i3PIgaPpgojnWPOOYr1S9TQfwggxd4FdU3eUwgq8dxuW9NuH2qmEBYvnB9BTcGSoNhrnpDZ0lrA/dFOArDHEheyLz8XirTauzciq+r1pbF0dld5uVaxZfNzbI6labDZPjf/jjSDgVc4c="
+  - secure: "RsEbBA2yhdg2MYvMucJ1mmfm99UjEaC47NcYimy0Fsvzjfoe1vYrSJlYzyb9SIOj2URo8v4sAFWUbD+RTX/5pBgXCzSzEKh6ZZ1Sd7O05sx5dz8M3kRzo4asm9di8kAI842eCW/n6EhlykQBvtgA00os3ivG0Gh6KS/WebMsXsM="
 before_install:
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
+- if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
 - export TRAVIS_OS_NAME=${platform}
-- "./vendor/mapbox-gl-native/scripts/travis_before_install.sh"
-- source ./vendor/mapbox-gl-native/scripts/flags.sh
-- "./scripts/nvm_install.sh"
-
+- ./scripts/nvm_install.sh
+- source vendor/mapbox-gl-native/scripts/flags.sh
+- ./deps/travis_build.sh
 install:
 - npm install --build-from-source --clang
-
 script:
 - npm test
-
 after_success:
-- "./scripts/travis_publish.sh"
-
+- ./scripts/travis_publish.sh
 git:
   submodules: true
