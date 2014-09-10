@@ -22,7 +22,11 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
+        var imageSync = mbgl.renderSync(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
+
         mbgl.render(JSON.stringify(style), JSON.stringify(info), suitePath + '/', function(err, image) {
+            t.equal(image.size, imageSync.size, 'async image size matches sync image size');
+
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
@@ -30,29 +34,6 @@ function renderTest(style, info, dir) {
                 t.pass('generated image async');
                 t.end();
             });
-        });
-    };
-}
-
-function renderTestSync(style, info, dir) {
-    return function (t) {
-        var watchdog = setTimeout(function() {
-            t.fail('timed out after 4 seconds');
-            t.end();
-        }, 4000);
-
-        t.once('end', function() {
-            clearTimeout(watchdog);
-        });
-
-        var image = mbgl.renderSync(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
-
-        mkdirp.sync(dir);
-
-        fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-            if (err) t.fail(err);
-            t.pass('generated image');
-            t.end();
         });
     };
 }
@@ -78,7 +59,6 @@ fs.readdirSync(path.join(suitePath, 'tests')).forEach(function(dir) {
     }
 
     for (var k in info) {
-        // test(dir + ' ' + k, renderTest(style, info[k], path.join(suitePath, 'tests', dir, k)));
-        test(dir + ' ' + k, renderTestSync(style, info[k], path.join(suitePath, 'tests', dir, k)));
+        test(dir + ' ' + k, renderTest(style, info[k], path.join(suitePath, 'tests', dir, k)));
     }
 });
