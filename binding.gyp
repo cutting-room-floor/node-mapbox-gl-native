@@ -47,7 +47,8 @@
       'dependencies': [ 'libmapboxgl' ],
       'sources': [
         'src/node_mbgl.cpp',
-        'src/render_tile.cpp',
+        'src/render.cpp',
+        'src/render_worker.cpp',
         'vendor/mapbox-gl-native/common/headless_view.cpp',
         'vendor/mapbox-gl-native/common/platform_default.cpp',
         'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
