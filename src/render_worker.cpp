@@ -53,6 +53,7 @@ const std::string RenderWorker::Render() {
     const double longitude = value.HasMember("center") ? value["center"][rapidjson::SizeType(1)].GetDouble() : 0;
     const unsigned int width = value.HasMember("width") ? value["width"].GetUint() : 512;
     const unsigned int height = value.HasMember("height") ? value["height"].GetUint() : 512;
+    const unsigned int pixelRatio = value.HasMember("pixelRatio") ? value["pixelRatio"].GetDouble() : 1;
     std::vector<std::string> classes;
     if (value.HasMember("classes")) {
         const rapidjson::Value &js_classes = value["classes"];
@@ -70,8 +71,8 @@ const std::string RenderWorker::Render() {
     map.setStyleJSON(style_, base_directory_);
     map.setAppliedClasses(classes);
 
-    view.resize(width, height);
-    map.resize(width, height);
+    view.resize(width, height, pixelRatio);
+    map.resize(width, height, pixelRatio);
     map.setLonLatZoom(longitude, latitude, zoom);
     map.setBearing(bearing);
 
