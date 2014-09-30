@@ -22,11 +22,7 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        var imageSync = mbgl.renderSync(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
-
         mbgl.render(JSON.stringify(style), JSON.stringify(info), suitePath + '/', function(err, image) {
-            t.equal(image.size, imageSync.size, 'async image size matches sync image size');
-
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
