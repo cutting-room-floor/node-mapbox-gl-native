@@ -1,12 +1,17 @@
 #include <node.h>
 #include <nan.h>
 
+#include <node_mbgl/display.hpp>
 #include <node_mbgl/render.hpp>
 
 namespace node_mbgl
 {
 
+mbgl::HeadlessDisplay *display_;
+
 void Init(v8::Handle<v8::Object> exports) {
+    display_ = new mbgl::HeadlessDisplay();
+
     exports->Set(NanNew("render"),
         NanNew<v8::FunctionTemplate>(Render)->GetFunction());
     exports->Set(NanNew("renderSync"),

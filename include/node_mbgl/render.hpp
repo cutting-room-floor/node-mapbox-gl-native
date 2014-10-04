@@ -1,5 +1,5 @@
-#ifndef NODE_MBGL_RENDER_TILE_HPP
-#define NODE_MBGL_RENDER_TILE_HPP
+#ifndef NODE_MBGL_RENDER
+#define NODE_MBGL_RENDER
 
 #include <node.h>
 #include <nan.h>
@@ -12,4 +12,4 @@ NAN_METHOD(RenderSync);
 
 } // ns node_mbgl
 
-#endif // NODE_MBGL_RENDER_TILE_HPP
+#endif // NODE_MBGL_RENDER

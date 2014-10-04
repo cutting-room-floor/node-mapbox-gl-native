@@ -1,5 +1,5 @@
-#ifndef NODE_MBGL_TILE_WORKER_HPP
-#define NODE_MBGL_TILE_WORKER_HPP
+#ifndef NODE_MBGL_RENDER_WORKER
+#define NODE_MBGL_RENDER_WORKER
 
 #include <node.h>
 #include <nan.h>
@@ -31,4 +31,4 @@ private:
 
 } // ns node_mbgl
 
-#endif // NODE_MBGL_TILE_WORKER_HPP
+#endif // NODE_MBGL_RENDER_WORKER

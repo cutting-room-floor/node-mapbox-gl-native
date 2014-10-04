@@ -1,3 +1,4 @@
+#include <node_mbgl/display.hpp>
 #include <node_mbgl/render_worker.hpp>
 
 #include <mbgl/map/map.hpp>
@@ -65,7 +66,7 @@ const std::string RenderWorker::Render() {
         }
     }
 
-    mbgl::HeadlessView view;
+    mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
 
     map.setStyleJSON(style_, base_directory_);
