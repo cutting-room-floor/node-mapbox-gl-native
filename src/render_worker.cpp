@@ -1,4 +1,3 @@
-#include <node_mbgl/display.hpp>
 #include <node_mbgl/render_worker.hpp>
 
 #include <mbgl/map/map.hpp>
@@ -11,6 +10,8 @@
 
 #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
 #include "../vendor/mapbox-gl-native/test/fixtures/fixture_log.hpp"
+
+#include <node_mbgl/display.hpp>
 
 namespace node_mbgl
 {
@@ -66,7 +67,7 @@ const std::string RenderWorker::Render() {
         }
     }
 
-    mbgl::HeadlessView view(display_);
+    mbgl::HeadlessView view(*(new std::shared_ptr<mbgl::HeadlessDisplay>(display_)));
     mbgl::Map map(view);
 
     map.setStyleJSON(style_, base_directory_);
