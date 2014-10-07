@@ -6,7 +6,7 @@
 namespace node_mbgl
 {
 
-extern mbgl::HeadlessDisplay *display_;
+extern std::shared_ptr<mbgl::HeadlessDisplay> display_;
 
 } // ns node_mbgl
 

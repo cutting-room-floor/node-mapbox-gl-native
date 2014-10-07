@@ -67,7 +67,7 @@ const std::string RenderWorker::Render() {
         }
     }
 
-    mbgl::HeadlessView view(*(new std::shared_ptr<mbgl::HeadlessDisplay>(display_)));
+    mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
 
     map.setStyleJSON(style_, base_directory_);

@@ -7,10 +7,10 @@
 namespace node_mbgl
 {
 
-mbgl::HeadlessDisplay *display_;
+std::shared_ptr<mbgl::HeadlessDisplay> display_;
 
 void Init(v8::Handle<v8::Object> exports) {
-    display_ = new mbgl::HeadlessDisplay();
+    display_ = std::make_shared<mbgl::HeadlessDisplay>();
 
     exports->Set(NanNew("render"),
         NanNew<v8::FunctionTemplate>(Render)->GetFunction());
