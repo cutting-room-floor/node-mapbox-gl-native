@@ -56,6 +56,7 @@ const std::string RenderWorker::Render() {
     const unsigned int width = value.HasMember("width") ? value["width"].GetUint() : 512;
     const unsigned int height = value.HasMember("height") ? value["height"].GetUint() : 512;
     const unsigned int pixelRatio = value.HasMember("pixelRatio") ? value["pixelRatio"].GetDouble() : 1;
+    const std::string accessToken = value.HasMember("accessToken") ? std::string { value["accessToken"].GetString(), value["accessToken"].GetStringLength() } : "";
     std::vector<std::string> classes;
     if (value.HasMember("classes")) {
         const rapidjson::Value &js_classes = value["classes"];
@@ -69,6 +70,10 @@ const std::string RenderWorker::Render() {
 
     mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
+
+    if (!accessToken.empty()) {
+        map.setAccessToken(accessToken);
+    }
 
     map.setStyleJSON(style_, base_directory_);
     map.setAppliedClasses(classes);
