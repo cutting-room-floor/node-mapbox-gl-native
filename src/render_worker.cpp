@@ -84,13 +84,7 @@ const std::string RenderWorker::Render() {
     const unsigned int w = width * pixelRatio;
     const unsigned int h = height * pixelRatio;
 
-    const std::unique_ptr<uint32_t[]> pixels(new uint32_t[w * h]);
-
-    map.view.make_active();
-    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.get());
-    map.view.make_inactive();
-
-    return mbgl::util::compress_png(width, height, pixels.get(), true);
+    return mbgl::util::compress_png(w, h, view.readPixels().get(), true);
 }
 
 void RenderWorker::Execute() {
