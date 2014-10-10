@@ -22,14 +22,18 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
+        var imageSync = mbgl.renderSync(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
 
-        mkdirp.sync(dir);
+        mbgl.render(JSON.stringify(style), JSON.stringify(info), suitePath + '/', function(err, image) {
+            t.equal(image.size, imageSync.size, 'async image size matches sync image size');
 
-        fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-            if (err) t.fail(err);
-            t.pass('generated image');
-            t.end();
+            mkdirp.sync(dir);
+
+            fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
+                if (err) t.fail(err);
+                t.pass('generated image async');
+                t.end();
+            });
         });
     };
 }

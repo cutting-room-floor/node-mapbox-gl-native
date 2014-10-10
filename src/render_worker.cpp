@@ -1,4 +1,4 @@
-#include <node_mbgl/render_tile.hpp>
+#include <node_mbgl/render_worker.hpp>
 
 #include <mbgl/map/map.hpp>
 #include <mbgl/util/image.hpp>
@@ -11,18 +11,21 @@
 #include "../vendor/mapbox-gl-native/common/headless_view.hpp"
 #include "../vendor/mapbox-gl-native/test/fixtures/fixture_log.hpp"
 
-#include <iostream>
-
 namespace node_mbgl
 {
 
-NAN_METHOD(RenderTile) {
-    NanScope();
+RenderWorker::RenderWorker(const std::string &style,
+                           const std::string &info,
+                           const std::string &base_directory,
+                           NanCallback *callback)
+    : NanAsyncWorker(callback),
+      style_(style),
+      info_(info),
+      base_directory_(base_directory) {}
 
-    std::string style_(*v8::String::Utf8Value(args[0].As<v8::String>()));
-    const std::string info_(*v8::String::Utf8Value(args[1].As<v8::String>()));
-    const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
+RenderWorker::~RenderWorker() {}
 
+const std::string RenderWorker::Render() {
     // Parse style.
     rapidjson::Document styleDoc;
     styleDoc.Parse<0>((const char *const)style_.c_str());
@@ -50,6 +53,7 @@ NAN_METHOD(RenderTile) {
     const double longitude = value.HasMember("center") ? value["center"][rapidjson::SizeType(1)].GetDouble() : 0;
     const unsigned int width = value.HasMember("width") ? value["width"].GetUint() : 512;
     const unsigned int height = value.HasMember("height") ? value["height"].GetUint() : 512;
+    const unsigned int pixelRatio = value.HasMember("pixelRatio") ? value["pixelRatio"].GetDouble() : 1;
     std::vector<std::string> classes;
     if (value.HasMember("classes")) {
         const rapidjson::Value &js_classes = value["classes"];
@@ -64,23 +68,42 @@ NAN_METHOD(RenderTile) {
     mbgl::HeadlessView view;
     mbgl::Map map(view);
 
-    map.setStyleJSON(style_, base_directory);
+    map.setStyleJSON(style_, base_directory_);
     map.setAppliedClasses(classes);
 
-    view.resize(width, height);
-    map.resize(width, height);
+    view.resize(width, height, pixelRatio);
+    map.resize(width, height, pixelRatio);
     map.setLonLatZoom(longitude, latitude, zoom);
     map.setBearing(bearing);
 
     // Run the loop. It will terminate when we don't have any further listeners.
     map.run();
 
-    const std::unique_ptr<uint32_t[]> pixels(new uint32_t[width * height]);
+    const unsigned int w = width * pixelRatio;
+    const unsigned int h = height * pixelRatio;
+
+    const std::unique_ptr<uint32_t[]> pixels(new uint32_t[w * h]);
+
+    map.view.make_active();
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.get());
+    map.view.make_inactive();
 
-    const std::string image_ = mbgl::util::compress_png(width, height, pixels.get(), true);
+    return mbgl::util::compress_png(width, height, pixels.get(), true);
+}
 
-    NanReturnValue(node::Buffer::New(image_.c_str(), image_.length())->handle_);
+void RenderWorker::Execute() {
+    image_ = Render();
+}
+
+void RenderWorker::HandleOKCallback() {
+    NanScope();
+
+    v8::Local<v8::Value> argv[] = {
+        NanNull(),
+        NanNewBufferHandle(image_.c_str(), image_.length())
+    };
+
+    callback->Call(2, argv);
 };
 
 } // ns node_mbgl
