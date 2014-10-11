@@ -11,8 +11,8 @@ env:
   global:
   - PKG_CONFIG_PATH: 'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/pkgconfig:vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/pkgconfig'
   - AWS_S3_BUCKET: 'node-mapbox-gl-native'
-  - secure: "2ie/lwLSSUpx9q98geDlT/BxKYExK18i3PIgaPpgojnWPOOYr1S9TQfwggxd4FdU3eUwgq8dxuW9NuH2qmEBYvnB9BTcGSoNhrnpDZ0lrA/dFOArDHEheyLz8XirTauzciq+r1pbF0dld5uVaxZfNzbI6labDZPjf/jjSDgVc4c="
-  - secure: "RsEbBA2yhdg2MYvMucJ1mmfm99UjEaC47NcYimy0Fsvzjfoe1vYrSJlYzyb9SIOj2URo8v4sAFWUbD+RTX/5pBgXCzSzEKh6ZZ1Sd7O05sx5dz8M3kRzo4asm9di8kAI842eCW/n6EhlykQBvtgA00os3ivG0Gh6KS/WebMsXsM="
+  - secure: "BbLjMTgKGqbxrvHXvahGtt7NJVrCA2TiSGzgg1DdR3JVse5SUkG4FScKRwQWsWSMHUYQP4rCxEkaEB8FHlaXFVZ6hzHKIEPI7gKlcrH+WCZW0MibGO7L5/XhfFvFRhd5iXB5WjzjrEUzppShb1xxQWIRdhVZW0pMZpsJd48hynI="
+  - secure: "cTYRVy66OUf9jYtgxIvRIlXwpykb59TK8s/ZKP21HgD+ARGbAPQ1YI8ozcDx6vB8FvspXAWz5pO9zbZWXPUEu2/dTZm+oYfrg0tGOXqEDjmc+GVfAHzKbQ2i9yD8wMqzfmwcD9GjOYXsddWuZAXOwUtTZUmG4T60gTheOZ4aqUA="
 before_install:
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
 - if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
