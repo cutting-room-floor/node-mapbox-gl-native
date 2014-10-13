@@ -13,21 +13,21 @@ var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), baseDir
 
 ## Installing
 
-By default, installs binaries. On these platforms no external dependencies are needed.
+Not yet. See [building from source](#building-from-source).
+
+~~By default, installs binaries. On these platforms no external dependencies are needed.~~
 
 - 64 bit OS X or 64 bit Linux
 - Node v0.10.x
 
-Just run:
+~~Just run: `npm install`~~
 
-```
-npm install
-```
-
-However, other platforms will fall back to a source compile: see [building from source](#building-from-source) for details.
+~~However, other platforms will fall back to a source compile: see [building from source](#building-from-source) for details.~~
 
 ## Building from source
+Grab the `mapbox-gl-native` submodule then build from source.
 
 ```
+git submodule update --init
 npm install --build-from-source
 ```
