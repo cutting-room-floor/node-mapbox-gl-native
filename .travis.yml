@@ -18,7 +18,8 @@ before_install:
 - if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
 - export TRAVIS_OS_NAME=${platform}
 - ./scripts/nvm_install.sh
-- source vendor/mapbox-gl-native/scripts/flags.sh
+- source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
+- source ./vendor/mapbox-gl-native/scripts/flags.sh
 - ./deps/travis_build.sh
 install:
 - npm install --build-from-source --clang
