@@ -21,6 +21,7 @@ before_install:
 - source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
 - source ./vendor/mapbox-gl-native/scripts/flags.sh
 - ./deps/travis_build.sh
+- if [[ "$platform" == "linux" ]]; then glxinfo; fi
 install:
 - npm install --build-from-source --clang
 script:
