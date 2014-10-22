@@ -38,7 +38,7 @@
           'outputs': [
             'vendor/mapbox-gl-native/build/Release',
           ],
-          'action': ['./deps/build_mbgl.sh']
+          'action': ['./scripts/build_mbgl.sh']
         }
       ]
     },

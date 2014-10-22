@@ -16,15 +16,14 @@ env:
   - LD_LIBRARY_PATH: '/usr/local/lib'
 before_install:
 - export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
-- if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
 - export TRAVIS_OS_NAME=${platform}
+- if [[ "$platform" == "linux" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
 - ./scripts/nvm_install.sh
 - source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
 - source ./vendor/mapbox-gl-native/scripts/flags.sh
-- ./deps/travis_build.sh
-- if [[ "$platform" == "linux" ]]; then glxinfo; fi
 install:
 - npm install --build-from-source --clang
+- if [[ "$platform" == "linux" ]]; then glxinfo; fi
 script:
 - npm test
 after_success:
