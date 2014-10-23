@@ -1,2 +1,4 @@
 build
 lib
+config.gypi
+mason_packages

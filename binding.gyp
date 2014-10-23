@@ -1,4 +1,7 @@
 {
+  'includes': [
+    'config.gypi',
+  ],
   'targets': [
     {
       'target_name': 'libmapboxgl',
@@ -11,7 +14,7 @@
               'libraries': [
                 '-lX11',
                 '-lGL',
-                '../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib/libboost_regex.a',
+                '-lboost_regex',
               ],
             },
           }],
@@ -63,20 +66,24 @@
       'conditions': [
         ['OS=="linux"', {
           'include_dirs': [
-            'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/include',
+            '<@(png_cflags)',
+            '<@(zlib_cflags)',
           ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
-            '-L../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libstdcpp-gcc-x86_64-linux/lib -lpng16 -lz',
+            '<@(png_libraries)',
+            '<@(zlib_libraries)',
           ],
         }],
         ['OS=="mac"', {
           'include_dirs': [
-            'vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include',
+            '<@(png_cflags)',
+            '<@(zlib_cflags)',
           ],
           'libraries': [
             '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
-            '-L../vendor/mapbox-gl-native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib -lpng16 -lz',
+            '<@(png_libraries)',
+            '<@(zlib_libraries)',
           ],
         }],
       ],
