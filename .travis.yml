@@ -21,6 +21,7 @@ before_install:
 - ./scripts/nvm_install.sh
 - source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
 - source ./vendor/mapbox-gl-native/scripts/flags.sh
+- (git clone https://github.com/mapbox/mason.git ~/.mason ; sudo ln -s ~/.mason/mason /usr/local/bin/mason)
 install:
 - npm install --build-from-source --clang
 - if [[ "$platform" == "linux" ]]; then glxinfo; fi
