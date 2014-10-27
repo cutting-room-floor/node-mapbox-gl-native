@@ -7,13 +7,31 @@ namespace node_mbgl
 NAN_METHOD(Render) {
     NanScope();
 
+    if (!args[1]->IsObject())
+    {
+        NanThrowTypeError("second argument must be an options object");
+        NanReturnUndefined();
+    }
+    Local<Object> v8options = NanNew<Object>();
+    v8options = args[1]->ToObject();
+    renderWorkerOptions *options = new renderWorkerOptions();
+    options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
+    options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
+    options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
+    options->pixelRatio = v8options->Has(NanNew("pixelRatio")) ? v8options->Get(NanNew("pixelRatio"))->IntegerValue() : 1;
+
+    v8::String::Utf8Value accessToken(v8options->Get(NanNew("accessToken"))->ToString());
+    options->accessToken = std::string(*accessToken);
+
     const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
-    const std::string info(*v8::String::Utf8Value(args[1].As<v8::String>()));
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
     NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
 
     NanAsyncQueueWorker(new RenderWorker(style,
-                                         info,
+                                         options,
                                          base_directory,
                                          callback));
 
@@ -23,12 +41,30 @@ NAN_METHOD(Render) {
 NAN_METHOD(RenderSync) {
     NanScope();
 
+    if (!args[1]->IsObject())
+    {
+        NanThrowTypeError("second argument must be an options object");
+        NanReturnUndefined();
+    }
+    Local<Object> v8options = NanNew<Object>();
+    v8options = args[1]->ToObject();
+    renderWorkerOptions *options = new renderWorkerOptions();
+    options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
+    options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
+    options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
+    options->pixelRatio = v8options->Has(NanNew("pixelRatio")) ? v8options->Get(NanNew("pixelRatio"))->IntegerValue() : 1;
+
+    v8::String::Utf8Value accessToken(v8options->Get(NanNew("accessToken"))->ToString());
+    options->accessToken = std::string(*accessToken);
+
     const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
-    const std::string info(*v8::String::Utf8Value(args[1].As<v8::String>()));
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
 
     RenderWorker worker(style,
-                        info,
+                        options,
                         base_directory,
                         nullptr);
 
