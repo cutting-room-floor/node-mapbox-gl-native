@@ -9,10 +9,21 @@
 namespace node_mbgl
 {
 
+struct renderWorkerOptions {
+    double zoom;
+    double bearing;
+    double latitude;
+    double longitude;
+    unsigned int width;
+    unsigned int height;
+    unsigned int pixelRatio;
+    std::string accessToken;
+};
+
 class RenderWorker : public NanAsyncWorker {
 public:
     RenderWorker(const std::string &style,
-                 const std::string &info,
+                 renderWorkerOptions *options,
                  const std::string &base_directory,
                  NanCallback *callback);
     ~RenderWorker();
@@ -23,9 +34,9 @@ public:
     void HandleOKCallback();
 
 private:
-    std::string style_; 
-    const std::string info_; 
-    const std::string base_directory_; 
+    std::string style_;
+    renderWorkerOptions *options_;
+    const std::string base_directory_;
     std::string image_;
 };
 
