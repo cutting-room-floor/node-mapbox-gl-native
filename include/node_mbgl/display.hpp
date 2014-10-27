@@ -1,7 +1,7 @@
 #ifndef NODE_MBGL_DISPLAY
 #define NODE_MBGL_DISPLAY
 
-#include "../../vendor/mapbox-gl-native/common/headless_display.hpp"
+#include "mbgl/platform/default/headless_display.hpp"
 
 namespace node_mbgl
 {

@@ -4,59 +4,11 @@
   ],
   'targets': [
     {
-      'target_name': 'libmapboxgl',
-      'type': 'none',
-      'hard_dependency': 1,
-      'direct_dependent_settings': {
-        'conditions': [
-          ['OS == "linux"', {
-            'link_settings': {
-              'libraries': [
-                '-lX11',
-                '-lGL',
-                '-lboost_regex',
-              ],
-            },
-          }],
-          ['OS == "mac"', {
-            'link_settings': {
-              'libraries': [
-                '-framework OpenGL',
-              ],
-            },
-            'xcode_settings': {
-              'OTHER_LDFLAGS': [
-                '-framework OpenGL',
-              ],
-            },
-          }],
-        ],
-      },
-      'actions': [
-        {
-          'action_name': 'build_mbgl',
-          'inputs': [
-            'vendor/mapbox-gl-native',
-          ],
-          'outputs': [
-            'vendor/mapbox-gl-native/build/Release',
-          ],
-          'action': ['./scripts/build_mbgl.sh']
-        }
-      ]
-    },
-    {
       'target_name': '<(module_name)',
-      'dependencies': [ 'libmapboxgl' ],
       'sources': [
         'src/node_mbgl.cpp',
         'src/render.cpp',
-        'src/render_worker.cpp',
-        'vendor/mapbox-gl-native/common/headless_display.cpp',
-        'vendor/mapbox-gl-native/common/headless_view.cpp',
-        'vendor/mapbox-gl-native/common/platform_default.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_request.cpp',
+        'src/render_worker.cpp'
       ],
       'include_dirs': [
         'include',
@@ -66,11 +18,14 @@
       'conditions': [
         ['OS=="linux"', {
           'include_dirs': [
+            '-I/usr/local/include',
             '<@(png_cflags)',
             '<@(zlib_cflags)',
           ],
           'libraries': [
-            '-L../vendor/mapbox-gl-native/build/Release/obj.target -lmapboxgl',
+            '-L/usr/local/lib -lmbgl',
+            '-L/usr/local/lib -lmbgl-linux',
+            '-L/usr/local/lib -lmbgl-headless',
             '<@(png_libraries)',
             '<@(zlib_libraries)',
           ],

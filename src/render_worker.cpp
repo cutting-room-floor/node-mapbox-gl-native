@@ -8,8 +8,7 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
-#include "../vendor/mapbox-gl-native/common/headless_view.hpp"
-#include "../vendor/mapbox-gl-native/test/fixtures/fixture_log.hpp"
+#include <mbgl/platform/default/headless_display.hpp>
 
 #include <node_mbgl/display.hpp>
 
@@ -47,7 +46,7 @@ const std::string RenderWorker::Render() {
     
     // if (value.HasMember("center")) ASSERT_EQ(true, value["center"].IsArray());
 
-    mbgl::Log::Set<mbgl::FixtureLogBackend>();
+    // mbgl::Log::Set<mbgl::FixtureLogBackend>();
 
     const double zoom = value.HasMember("zoom") ? value["zoom"].GetDouble() : 0;
     const double bearing = value.HasMember("bearing") ? value["bearing"].GetDouble() : 0;
