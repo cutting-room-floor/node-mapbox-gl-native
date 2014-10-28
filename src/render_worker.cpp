@@ -28,16 +28,6 @@ RenderWorker::RenderWorker(const std::string &style,
 RenderWorker::~RenderWorker() {}
 
 const std::string RenderWorker::Render() {
-//    if (value.HasMember("classes")) {
-//        const rapidjson::Value &js_classes = value["classes"];
-//        // ASSERT_EQ(true, js_classes.IsArray());
-//        for (rapidjson::SizeType i = 0; i < js_classes.Size(); i++) {
-//            const rapidjson::Value &js_class = js_classes[i];
-//            // ASSERT_EQ(true, js_class.IsString());
-//            classes.push_back({ js_class.GetString(), js_class.GetStringLength() });
-//        }
-//    }
-
     mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
 
@@ -46,7 +36,7 @@ const std::string RenderWorker::Render() {
     }
 
     map.setStyleJSON(style_, base_directory_);
-//    map.setAppliedClasses(classes);
+    map.setAppliedClasses(options_->classes);
 
     view.resize(options_->width, options_->height, options_->pixelRatio);
     map.resize(options_->width, options_->height, options_->pixelRatio);

@@ -5,6 +5,7 @@
 #include <nan.h>
 
 #include <string>
+#include <vector>
 
 namespace node_mbgl
 {
@@ -18,6 +19,7 @@ struct renderWorkerOptions {
     unsigned int height;
     unsigned int pixelRatio;
     std::string accessToken;
+    std::vector<std::string> classes;
 };
 
 class RenderWorker : public NanAsyncWorker {

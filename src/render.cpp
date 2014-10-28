@@ -12,7 +12,7 @@ NAN_METHOD(Render) {
         NanThrowTypeError("second argument must be an options object");
         NanReturnUndefined();
     }
-    Local<Object> v8options = NanNew<Object>();
+    v8::Local<v8::Object> v8options = NanNew<v8::Object>();
     v8options = args[1]->ToObject();
     renderWorkerOptions *options = new renderWorkerOptions();
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
@@ -25,6 +25,16 @@ NAN_METHOD(Render) {
 
     v8::String::Utf8Value accessToken(v8options->Get(NanNew("accessToken"))->ToString());
     options->accessToken = std::string(*accessToken);
+
+    if (v8options->Has(NanNew("classes"))) {
+        v8::Local<v8::Array> classes(v8options->Get(NanNew("classes"))->ToObject().As<v8::Array>());
+        int length = classes->Length();
+        options->classes.resize(length);
+        for (int i = 0; i < length; i++) {
+            std::string classname = *v8::String::Utf8Value(classes->Get(i)->ToString());
+            options->classes.push_back(classname);
+        }
+    }
 
     const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
@@ -46,7 +56,7 @@ NAN_METHOD(RenderSync) {
         NanThrowTypeError("second argument must be an options object");
         NanReturnUndefined();
     }
-    Local<Object> v8options = NanNew<Object>();
+    v8::Local<v8::Object> v8options = NanNew<v8::Object>();
     v8options = args[1]->ToObject();
     renderWorkerOptions *options = new renderWorkerOptions();
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
@@ -59,6 +69,16 @@ NAN_METHOD(RenderSync) {
 
     v8::String::Utf8Value accessToken(v8options->Get(NanNew("accessToken"))->ToString());
     options->accessToken = std::string(*accessToken);
+
+    if (v8options->Has(NanNew("classes"))) {
+        v8::Local<v8::Array> classes(v8options->Get(NanNew("classes"))->ToObject().As<v8::Array>());
+        int length = classes->Length();
+        options->classes.resize(length);
+        for (int i = 0; i < length; i++) {
+            std::string classname = *v8::String::Utf8Value(classes->Get(i)->ToString());
+            options->classes.push_back(classname);
+        }
+    }
 
     const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
