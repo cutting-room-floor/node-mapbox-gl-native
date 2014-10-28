@@ -23,6 +23,7 @@ before_install:
 - source ./vendor/mapbox-gl-native/scripts/flags.sh
 - (git clone https://github.com/mapbox/mason.git ~/.mason ; sudo ln -s ~/.mason/mason /usr/local/bin/mason)
 - if [[ "$platform" == "linux" ]]; then sudo apt-get install -y libboost-dev libcurl4-openssl-dev libxinerama-dev libpng12-dev libsqlite3-dev libboost-regex-dev; fi
+- ./scripts/build_mbgl.sh
 install:
 - npm install --build-from-source --clang
 - if [[ "$platform" == "linux" ]]; then glxinfo; fi
