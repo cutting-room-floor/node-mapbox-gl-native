@@ -1,6 +1,8 @@
 #include <node_mbgl/render.hpp>
 #include <node_mbgl/render_worker.hpp>
 
+#include <iostream>
+
 namespace node_mbgl
 {
 
@@ -15,10 +17,11 @@ NAN_METHOD(Render) {
     v8::Local<v8::Object> v8options = NanNew<v8::Object>();
     v8options = args[1]->ToObject();
     renderWorkerOptions *options = new renderWorkerOptions();
+
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
-    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("latitude"))->NumberValue() : 0;
-    options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("center")) ? v8options->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue() : 0;
+    options->longitude = v8options->Has(NanNew("center")) ? v8options->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
     options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
     options->pixelRatio = v8options->Has(NanNew("pixelRatio")) ? v8options->Get(NanNew("pixelRatio"))->IntegerValue() : 1;
@@ -61,8 +64,8 @@ NAN_METHOD(RenderSync) {
     renderWorkerOptions *options = new renderWorkerOptions();
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
-    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("latitude"))->NumberValue() : 0;
-    options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("center")) ? v8options->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue() : 0;
+    options->longitude = v8options->Has(NanNew("center")) ? v8options->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
     options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
     options->pixelRatio = v8options->Has(NanNew("pixelRatio")) ? v8options->Get(NanNew("pixelRatio"))->IntegerValue() : 1;
