@@ -17,7 +17,7 @@ NAN_METHOD(Render) {
     renderWorkerOptions *options = new renderWorkerOptions();
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
-    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("latitude"))->NumberValue() : 0;
     options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
     options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
@@ -61,7 +61,7 @@ NAN_METHOD(RenderSync) {
     renderWorkerOptions *options = new renderWorkerOptions();
     options->zoom = v8options->Has(NanNew("zoom")) ? v8options->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = v8options->Has(NanNew("bearing")) ? v8options->Get(NanNew("bearing"))->NumberValue() : 0;
-    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
+    options->latitude = v8options->Has(NanNew("latitude")) ? v8options->Get(NanNew("latitude"))->NumberValue() : 0;
     options->longitude = v8options->Has(NanNew("longitude")) ? v8options->Get(NanNew("longitude"))->NumberValue() : 0;
     options->width = v8options->Has(NanNew("width")) ? v8options->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = v8options->Has(NanNew("height")) ? v8options->Get(NanNew("height"))->IntegerValue() : 512;
