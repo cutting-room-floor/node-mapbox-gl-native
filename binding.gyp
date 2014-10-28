@@ -18,16 +18,24 @@
       'conditions': [
         ['OS=="linux"', {
           'include_dirs': [
+            '-I/usr/include',
             '-I/usr/local/include',
             '<@(png_cflags)',
+            '<@(curl_cflags)',
             '<@(zlib_cflags)',
+            '<@(sqlite3_cflags)',
+            '<@(glfw3_cflags)',
           ],
           'libraries': [
             '-L/usr/local/lib -lmbgl',
             '-L/usr/local/lib -lmbgl-linux',
             '-L/usr/local/lib -lmbgl-headless',
             '<@(png_libraries)',
+            '<@(curl_libraries)',
             '<@(zlib_libraries)',
+            '<@(sqlite3_libraries)',
+            '<@(glfw3_libraries)',
+            '-lboost_regex',
           ],
         }],
         ['OS=="mac"', {
