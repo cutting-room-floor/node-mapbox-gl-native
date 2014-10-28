@@ -36,7 +36,7 @@ function renderTest(style, info, dir) {
         var remaining = 2;
         var start = +new Date;
         for (var i = 0; i < remaining; i++) {
-            mbgl.render(JSON.stringify(style), JSON.stringify(info), suitePath + '/', function(err, image) {
+            mbgl.render(JSON.stringify(style), info, suitePath + '/', function(err, image) {
                 t.ifError(err);
                 t.equal(image.length, 24679);
                 t.ok(true, 'x10 render @ ' + ((+new Date) - start) + 'ms');

@@ -5,14 +5,27 @@
 #include <nan.h>
 
 #include <string>
+#include <vector>
 
 namespace node_mbgl
 {
 
+struct renderWorkerOptions {
+    double zoom;
+    double bearing;
+    double latitude;
+    double longitude;
+    unsigned int width;
+    unsigned int height;
+    unsigned int pixelRatio;
+    std::string accessToken;
+    std::vector<std::string> classes;
+};
+
 class RenderWorker : public NanAsyncWorker {
 public:
     RenderWorker(const std::string &style,
-                 const std::string &info,
+                 const renderWorkerOptions *options,
                  const std::string &base_directory,
                  NanCallback *callback);
     ~RenderWorker();
@@ -23,9 +36,9 @@ public:
     void HandleOKCallback();
 
 private:
-    std::string style_; 
-    const std::string info_; 
-    const std::string base_directory_; 
+    std::string style_;
+    const renderWorkerOptions *options_;
+    const std::string base_directory_;
     std::string image_;
 };
 

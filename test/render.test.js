@@ -22,7 +22,7 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        mbgl.render(JSON.stringify(style), JSON.stringify(info), suitePath + '/', function(err, image) {
+        mbgl.render(JSON.stringify(style), info, suitePath + '/', function(err, image) {
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
