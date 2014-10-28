@@ -17,7 +17,7 @@ namespace node_mbgl
 {
 
 RenderWorker::RenderWorker(const std::string &style,
-                           renderWorkerOptions *options,
+                           const renderWorkerOptions *options,
                            const std::string &base_directory,
                            NanCallback *callback)
     : NanAsyncWorker(callback),
@@ -28,6 +28,8 @@ RenderWorker::RenderWorker(const std::string &style,
 RenderWorker::~RenderWorker() {}
 
 const std::string RenderWorker::Render() {
+    mbgl::Log::Set<mbgl::FixtureLogBackend>();
+
     mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
 
