@@ -10,7 +10,6 @@ namespace node_mbgl
 {
 
 NAN_METHOD(Render);
-NAN_METHOD(RenderSync);
 
 } // ns node_mbgl
 
