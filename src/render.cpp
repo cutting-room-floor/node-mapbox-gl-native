@@ -7,11 +7,24 @@ namespace node_mbgl
 NAN_METHOD(Render) {
     NanScope();
 
+    if (!args[0]->IsObject())
+    {
+        NanThrowTypeError("first argument must be a style object");
+        NanReturnUndefined();
+    }
+    
+    v8::Local<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
+    v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
+
+    v8::Handle<v8::Value> style_handle = args[0];
+    const std::string style(*v8::String::Utf8Value(stringify->Call(JSON, 1, &style_handle)));
+
     if (!args[1]->IsObject())
     {
         NanThrowTypeError("second argument must be an options object");
         NanReturnUndefined();
     }
+
     v8::Local<v8::Object> v8options = NanNew<v8::Object>();
     v8options = args[1]->ToObject();
     renderWorkerOptions *options = new renderWorkerOptions();
@@ -37,7 +50,6 @@ NAN_METHOD(Render) {
         }
     }
 
-    const std::string style(*v8::String::Utf8Value(args[0].As<v8::String>()));
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
     NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
 
