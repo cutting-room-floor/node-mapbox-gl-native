@@ -9,6 +9,8 @@
         'src/node_mbgl.cpp',
         'src/render.cpp',
         'src/render_worker.cpp',
+        'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
+        'vendor/mapbox-gl-native/test/fixtures/fixture_request.cpp',
       ],
       'include_dirs': [
         'include',

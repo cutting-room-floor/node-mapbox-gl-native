@@ -4,8 +4,6 @@
 #include <node.h>
 #include <nan.h>
 
-using namespace v8;
-
 namespace node_mbgl
 {
 
