@@ -4,10 +4,6 @@
 #include <mbgl/util/image.hpp>
 #include <mbgl/util/std.hpp>
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-
 #include <mbgl/platform/default/headless_display.hpp>
 
 #include <node_mbgl/display.hpp>

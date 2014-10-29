@@ -8,11 +8,11 @@
       'sources': [
         'src/node_mbgl.cpp',
         'src/render.cpp',
-        'src/render_worker.cpp'
+        'src/render_worker.cpp',
       ],
       'include_dirs': [
         'include',
-        'vendor/mapbox-gl-native/include',
+        '<!(mbgl-config --includedir)',
         '<!(node -e \"require(\'nan\')\")',
       ],
       'conditions': [
@@ -27,9 +27,7 @@
             '<@(glfw3_cflags)',
           ],
           'libraries': [
-            '-L/usr/local/lib -lmbgl',
-            '-L/usr/local/lib -lmbgl-linux',
-            '-L/usr/local/lib -lmbgl-headless',
+            '<!(mbgl-config --libs)',
             '<@(png_libraries)',
             '<@(curl_libraries)',
             '<@(zlib_libraries)',
@@ -44,7 +42,7 @@
             '<@(zlib_cflags)',
           ],
           'libraries': [
-            '-L../vendor/mapbox-gl-native/build/Release -lmapboxgl',
+            '<!(mbgl-config --libs)',
             '<@(png_libraries)',
             '<@(zlib_libraries)',
           ],
