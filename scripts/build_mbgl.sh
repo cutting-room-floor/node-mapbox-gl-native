@@ -7,4 +7,4 @@ cd vendor/mapbox-gl-native
 ./scripts/travis_before_install.sh
 CXX11=true CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure
 CXX11=true CFLAGS="-fPIC" CXXFLAGS="-fPIC" make mbgl
-CXX11=true CFLAGS="-fPIC" CXXFLAGS="-fPIC" sudo make install
+sudo make install
