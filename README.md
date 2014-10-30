@@ -31,3 +31,15 @@ Grab the `mapbox-gl-native` submodule then build from source.
 git submodule update --init
 npm install --build-from-source
 ```
+
+## Testing
+
+On linux you need XServer running:
+
+```sh
+sudo apt-get install xvfb
+export DISPLAY=:99
+XVFBARGS="$DISPLAY -ac -screen 0 1024x768x16"
+PIDFILE=${HOME}/xvfb_${DISPLAY:1}.pid
+/sbin/start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+```

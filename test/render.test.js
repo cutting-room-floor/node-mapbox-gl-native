@@ -22,14 +22,14 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), suitePath + '/');
+        mbgl.render(style, info, suitePath + '/', function(err, image) {
+            mkdirp.sync(dir);
 
-        mkdirp.sync(dir);
-
-        fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-            if (err) t.fail(err);
-            t.pass('generated image');
-            t.end();
+            fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
+                if (err) t.fail(err);
+                t.pass('generated image async');
+                t.end();
+            });
         });
     };
 }

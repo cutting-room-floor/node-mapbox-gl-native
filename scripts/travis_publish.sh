@@ -4,9 +4,9 @@ set -e
 
 # Inspect binary.
 if [ $platform == "linux" ]; then
-    ldd ./lib/fontnik.node
+    ldd ./lib/mapbox-gl-native.node
 else
-    otool -L ./lib/fontnik.node
+    otool -L ./lib/mapbox-gl-native.node
 fi
 
 COMMIT_MESSAGE=$(git show -s --format=%B $TRAVIS_COMMIT | tr -d '\n')
