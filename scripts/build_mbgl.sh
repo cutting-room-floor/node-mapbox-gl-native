@@ -5,6 +5,4 @@ set -o pipefail
 
 cd vendor/mapbox-gl-native
 ./scripts/travis_before_install.sh
-CXX11=true CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure
-CXX11=true CFLAGS="-fPIC" CXXFLAGS="-fPIC" make mbgl
-sudo make install
+PREFIX=${MBGL_PREFIX} make install -j$(nproc)
