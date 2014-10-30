@@ -9,46 +9,14 @@
         'src/node_mbgl.cpp',
         'src/render.cpp',
         'src/render_worker.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_request.cpp',
       ],
       'include_dirs': [
         'include',
-        '<!(mbgl-config --includedir)',
         '<!(node -e \"require(\'nan\')\")',
+        '<!(mbgl-config --includedir)',
       ],
-      'conditions': [
-        ['OS=="linux"', {
-          'include_dirs': [
-            '-I/usr/include',
-            '-I/usr/local/include',
-            '<@(png_cflags)',
-            '<@(curl_cflags)',
-            '<@(zlib_cflags)',
-            '<@(sqlite3_cflags)',
-            '<@(glfw3_cflags)',
-          ],
-          'libraries': [
-            '<!(mbgl-config --libs)',
-            '<@(png_libraries)',
-            '<@(curl_libraries)',
-            '<@(zlib_libraries)',
-            '<@(sqlite3_libraries)',
-            '<@(glfw3_libraries)',
-            '-lboost_regex',
-          ],
-        }],
-        ['OS=="mac"', {
-          'include_dirs': [
-            '<@(png_cflags)',
-            '<@(zlib_cflags)',
-          ],
-          'libraries': [
-            '<!(mbgl-config --libs)',
-            '<@(png_libraries)',
-            '<@(zlib_libraries)',
-          ],
-        }],
+      'libraries': [
+        '<!@(mbgl-config --libs)',
       ],
       'xcode_settings': {
           'MACOSX_DEPLOYMENT_TARGET': '10.8',
