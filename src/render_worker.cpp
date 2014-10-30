@@ -5,7 +5,6 @@
 #include <mbgl/util/std.hpp>
 
 #include <mbgl/platform/default/headless_display.hpp>
-#include "../vendor/mapbox-gl-native/test/fixtures/fixture_log.hpp"
 
 #include <node_mbgl/display.hpp>
 
@@ -24,7 +23,6 @@ RenderWorker::RenderWorker(const std::string &style,
 RenderWorker::~RenderWorker() {}
 
 const std::string RenderWorker::Render() {
-    mbgl::Log::Set<mbgl::FixtureLogBackend>();
 
     mbgl::HeadlessView view(display_);
     mbgl::Map map(view);
