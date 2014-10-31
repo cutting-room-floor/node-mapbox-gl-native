@@ -6,8 +6,9 @@
         'src/node_mbgl.cpp',
         'src/render.cpp',
         'src/render_worker.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_log.cpp',
-        'vendor/mapbox-gl-native/test/fixtures/fixture_request.cpp',
+        'vendor/mapbox-gl-native/src/storage/http_request.cpp',
+        'vendor/mapbox-gl-native/src/storage/response.cpp',
+        'vendor/mapbox-gl-native/platform/default/http_request_baton_curl.cpp',
       ],
       'include_dirs': [
         'include',
