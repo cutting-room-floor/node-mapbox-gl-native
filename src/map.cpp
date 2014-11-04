@@ -8,6 +8,16 @@ namespace node_mbgl
 
 v8::Persistent<v8::FunctionTemplate> Map::constructor;
 
+void Map::Init(v8::Handle<v8::Object> exports) {
+    v8::Local<v8::FunctionTemplate> lcons = 
+        NanNew<v8::FunctionTemplate>(Map::New);
+    lcons->InstanceTemplate()->SetInternalFieldCount(2);
+    lcons->SetClassName(NanNew("Map"));
+
+    exports->Set(NanNew("Map"), lcons->GetFunction());
+    NanAssignPersistent(Map::constructor, lcons);
+}
+
 Map::Map()
     : node::ObjectWrap(),
     view_(display_) {
@@ -26,7 +36,7 @@ NAN_METHOD(Map::New) {
     }
 }
 
-NAN_METHOD(Map::load) {
+NAN_METHOD(Map::Load) {
     NanScope();
 
     if (!args[0]->IsObject())
@@ -34,12 +44,16 @@ NAN_METHOD(Map::load) {
         NanThrowTypeError("first argument must be a style object");
         NanReturnUndefined();
     }
+
+    v8::Handle<v8::Value> style_handle = args[0];
     
     if (!args[1]->IsObject())
     {
         NanThrowTypeError("second argument must be an options object");
         NanReturnUndefined();
     }
+
+    v8::Local<v8::Object> options_obj = args[1]->ToObject();
 
     if (!args[2]->IsString())
     {
@@ -58,15 +72,15 @@ NAN_METHOD(Map::load) {
     NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
 
     NanAsyncQueueWorker(new LoadWorker(this,
-                                       args[0],
-                                       args[1]->ToObject(),
+                                       style_handle,
+                                       options_obj,
                                        base_directory,
                                        callback));
 
     NanReturnUndefined();
 }
 
-NAN_METHOD(Map::render) {
+NAN_METHOD(Map::Render) {
     NanScope();
 
     if (!args[0]->IsFunction())
@@ -83,7 +97,7 @@ NAN_METHOD(Map::render) {
     NanReturnUndefined();
 }
 
-void Map::resize(unsigned int width,
+void Map::Resize(unsigned int width,
                  unsigned int height,
                  unsigned int pixelRatio) {
     view_.resize(width, height, pixelRatio);

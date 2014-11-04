@@ -11,7 +11,7 @@ namespace node_mbgl
 
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(Map &map,
+    RenderWorker(Map *map,
                  NanCallback *callback);
     ~RenderWorker();
 
@@ -19,7 +19,7 @@ public:
     void HandleOKCallback();
 
 private:
-    Map map_;
+    Map *map_;
     std::string image_;
 };
 

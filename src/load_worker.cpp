@@ -3,7 +3,7 @@
 namespace node_mbgl
 {
 
-LoadWorker::LoadWorker(Map &map,
+LoadWorker::LoadWorker(Map *map,
                        v8::Handle<v8::Value> &style_handle,
                        v8::Local<v8::Object> &options_obj,
                        const std::string &base_directory,
@@ -51,13 +51,13 @@ void LoadWorker::Execute() {
     StringifyStyle();
     ParseOptions();
 
-    map_.get()->setStyleJSON(style_, base_directory_);
-    map_.get()->setAppliedClasses(options_->classes);
+    map_->get()->setStyleJSON(style_, base_directory_);
+    map_->get()->setAppliedClasses(options_->classes);
 
-    map_.resize(options_->width, options_->height, options_->pixelRatio);
+    map_->Resize(options_->width, options_->height, options_->pixelRatio);
 
-    map_.get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
-    map_.get()->setBearing(options_->bearing);
+    map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
+    map_->get()->setBearing(options_->bearing);
 }
 
 } // ns node_mbgl

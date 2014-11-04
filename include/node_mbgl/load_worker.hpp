@@ -26,7 +26,7 @@ struct LoadOptions {
 
 class LoadWorker : public NanAsyncWorker {
 public:
-    LoadWorker(Map &map,
+    LoadWorker(Map *map,
                v8::Handle<v8::Value> &style_handle,
                v8::Local<v8::Object> &options_obj,
                const std::string &base_directory,
@@ -39,7 +39,7 @@ public:
     void Execute();
 
 private:
-    Map map_;
+    Map *map_;
     v8::Handle<v8::Value> style_handle_;
     v8::Local<v8::Object> options_obj_;
     const std::string base_directory_;

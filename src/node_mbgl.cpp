@@ -19,6 +19,8 @@ void Init(v8::Handle<v8::Object> exports) {
 
     exports->Set(NanNew("Map"), lcons->GetFunction());
     NanAssignPersistent(Map::constructor, lcons);
+
+    Map::Init(exports);
 }
 
 NODE_MODULE(mapbox_gl_native, Init);

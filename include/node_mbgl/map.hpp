@@ -17,16 +17,17 @@ class Map : public node::ObjectWrap
 {
 
 public:
+    static v8::Persistent<v8::FunctionTemplate> constructor;
+    static void Init(v8::Handle<v8::Object>);
+
     Map();
     ~Map();
 
-    static v8::Persistent<v8::FunctionTemplate> constructor;
-
     static NAN_METHOD(New);
-    static NAN_METHOD(load);
-    static NAN_METHOD(render);
+    NAN_METHOD(Load);
+    NAN_METHOD(Render);
 
-    void resize(unsigned int width,
+    void Resize(unsigned int width,
                 unsigned int height,
                 unsigned int pixelRatio);
 
