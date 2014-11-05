@@ -11,8 +11,7 @@ namespace node_mbgl
 
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(Map *map,
-                 NanCallback *callback);
+    RenderWorker(Map *map, NanCallback *callback);
     ~RenderWorker();
 
     void Execute();

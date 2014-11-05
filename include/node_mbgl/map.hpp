@@ -11,21 +11,25 @@
 namespace node_mbgl
 {
 
+struct LoadOptions {
+    double zoom;
+    double bearing;
+    double latitude;
+    double longitude;
+    unsigned int width;
+    unsigned int height;
+    unsigned int pixelRatio;
+    std::string accessToken;
+    std::vector<std::string> classes;
+};
+
 typedef std::shared_ptr<mbgl::Map> map_ptr;
 
 class Map : public node::ObjectWrap
 {
 
 public:
-    static v8::Persistent<v8::FunctionTemplate> constructor;
     static void Init(v8::Handle<v8::Object>);
-
-    Map();
-    ~Map();
-
-    static NAN_METHOD(New);
-    NAN_METHOD(Load);
-    NAN_METHOD(Render);
 
     void Resize(unsigned int width,
                 unsigned int height,
@@ -39,6 +43,19 @@ public:
     inline unsigned int* readPixels() { return view_.readPixels().get(); }
 
 private:
+    static v8::Persistent<v8::Function> constructor;
+
+    Map();
+    ~Map();
+
+    static NAN_METHOD(New);
+
+    static const std::string StringifyStyle(v8::Handle<v8::Value> style_handle);
+    static const LoadOptions* ParseOptions(v8::Local<v8::Object> options);
+
+    static NAN_METHOD(Load);
+    static NAN_METHOD(Render);
+
     mbgl::HeadlessView view_;
     map_ptr map_;
 

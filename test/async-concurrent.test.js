@@ -36,7 +36,6 @@ function renderTest(style, info, dir) {
         var remaining = 2;
         var start = +new Date;
         var map = new mbgl.Map();
-        console.log(map);
         for (var i = 0; i < remaining; i++) {
             map.load(style, info, suitePath + '/', function(err) {
                 t.ifError(err);

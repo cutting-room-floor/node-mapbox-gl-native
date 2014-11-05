@@ -4,15 +4,15 @@
 namespace node_mbgl
 {
 
-RenderWorker::RenderWorker(Map *map,
-                           NanCallback *callback)
+RenderWorker::RenderWorker(Map *map, NanCallback *callback)
     : NanAsyncWorker(callback),
-      map_(map) {}
+    map_(map) {}
 
 RenderWorker::~RenderWorker() {}
 
 void RenderWorker::Execute() {
     // Run the loop. It will terminate when we don't have any further listeners.
+    
     map_->get()->run();
 
     image_ =  mbgl::util::compress_png(map_->getWidth(),
