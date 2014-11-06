@@ -6,7 +6,8 @@
 namespace node_mbgl
 {
 
-v8::Persistent<v8::Function> Map::constructor;
+v8::Persistent<v8::FunctionTemplate> Map::constructor;
+v8::Persistent<v8::Object> Map::pmap;
 
 Map::Map() : node::ObjectWrap(),
     view_(display_) {
@@ -27,7 +28,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
 
-    NanAssignPersistent(constructor, tpl->GetFunction());
+    NanAssignPersistent(constructor, tpl);
     exports->Set(NanNew("Map"), tpl->GetFunction());
 }
 
@@ -42,6 +43,7 @@ NAN_METHOD(Map::New) {
 
     Map *map = new Map();
     map->Wrap(args.This());
+    NanAssignPersistent(pmap, args.This());
     NanReturnValue(args.This());
 }
 

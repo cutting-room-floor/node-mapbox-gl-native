@@ -43,7 +43,8 @@ public:
     inline unsigned int* readPixels() { return view_.readPixels().get(); }
 
 private:
-    static v8::Persistent<v8::Function> constructor;
+    static v8::Persistent<v8::FunctionTemplate> constructor;
+    static v8::Persistent<v8::Object> pmap;
 
     Map();
     ~Map();
