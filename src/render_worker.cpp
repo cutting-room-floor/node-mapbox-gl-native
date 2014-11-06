@@ -47,7 +47,7 @@ const std::string RenderWorker::Render() {
     const unsigned int w = options_->width * options_->pixelRatio;
     const unsigned int h = options_->height * options_->pixelRatio;
 
-    return mbgl::util::compress_png(w, h, view.readPixels().get(), true);
+    return mbgl::util::compress_png(w, h, view.readPixels().get());
 }
 
 void RenderWorker::Execute() {
