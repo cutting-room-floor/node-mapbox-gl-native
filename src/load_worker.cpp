@@ -26,4 +26,16 @@ void LoadWorker::Execute() {
     map_->get()->setBearing(options_->bearing);
 }
 
+void LoadWorker::HandleOKCallback() {
+    NanScope();
+
+    v8::Local<v8::Value> argv[] = {
+        NanNull()
+    };
+
+    callback->Call(1, argv);
+
+    map_->_unref();
+};
+
 } // ns node_mbgl

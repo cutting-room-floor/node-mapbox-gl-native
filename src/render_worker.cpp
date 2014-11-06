@@ -30,6 +30,8 @@ void RenderWorker::HandleOKCallback() {
     };
 
     callback->Call(2, argv);
+
+    map_->_unref();
 };
 
 } // ns node_mbgl

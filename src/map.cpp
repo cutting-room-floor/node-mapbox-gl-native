@@ -7,7 +7,6 @@ namespace node_mbgl
 {
 
 v8::Persistent<v8::FunctionTemplate> Map::constructor;
-v8::Persistent<v8::Object> Map::pmap;
 
 Map::Map() : node::ObjectWrap(),
     view_(display_) {
@@ -43,7 +42,6 @@ NAN_METHOD(Map::New) {
 
     Map *map = new Map();
     map->Wrap(args.This());
-    NanAssignPersistent(pmap, args.This());
     NanReturnValue(args.This());
 }
 
@@ -120,6 +118,7 @@ NAN_METHOD(Map::Load) {
     NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.This());
+    map->_ref();
 
     NanAsyncQueueWorker(new LoadWorker(map,
                                        style,
@@ -142,6 +141,7 @@ NAN_METHOD(Map::Render) {
     NanCallback *callback = new NanCallback(args[0].As<v8::Function>());
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.This());
+    map->Ref();
 
     NanAsyncQueueWorker(new RenderWorker(map, callback));
 

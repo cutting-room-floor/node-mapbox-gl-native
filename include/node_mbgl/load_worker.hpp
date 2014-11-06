@@ -22,6 +22,7 @@ public:
     ~LoadWorker();
 
     void Execute();
+    void HandleOKCallback();
 
 private:
     Map *map_;
