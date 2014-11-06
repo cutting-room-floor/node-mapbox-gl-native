@@ -47,7 +47,18 @@ const std::string RenderWorker::Render() {
     const unsigned int w = options_->width * options_->pixelRatio;
     const unsigned int h = options_->height * options_->pixelRatio;
 
-    return mbgl::util::compress_png(w, h, view.readPixels().get());
+    auto pixels = view.readPixels();
+
+    const int stride = w * 4;
+    auto tmp = std::unique_ptr<char[]>(new char[stride]());
+    char *rgba = reinterpret_cast<char *>(pixels.get());
+    for (int i = 0, j = options_->height - 1; i < j; i++, j--) {
+        memcpy(tmp.get(), rgba + i * stride, stride);
+        memcpy(rgba + i * stride, rgba + j * stride, stride);
+        memcpy(rgba + j * stride, tmp.get(), stride);
+    }
+
+    return mbgl::util::compress_png(w, h, pixels.get());
 }
 
 void RenderWorker::Execute() {
