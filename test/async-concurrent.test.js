@@ -36,17 +36,17 @@ function renderTest(style, info, dir) {
         var remaining = 2;
         var start = +new Date;
         var map = new mbgl.Map();
-        for (var i = 0; i < remaining; i++) {
-            map.load(style, info, suitePath + '/', function(err) {
-                t.ifError(err);
+        map.load(style, info, suitePath + '/', function(err) {
+            t.ifError(err);
+            for (var i = 0; i < remaining; i++) {
                 map.render(function(err, image) {
                     t.ifError(err);
                     t.equal(image.length, 24679);
                     t.ok(true, 'x10 render @ ' + ((+new Date) - start) + 'ms');
                     if (!--remaining) t.end();
                 });
-            });
-        }
+            }
+        });
     };
 }
 

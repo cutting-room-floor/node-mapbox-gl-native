@@ -141,7 +141,7 @@ NAN_METHOD(Map::Render) {
     NanCallback *callback = new NanCallback(args[0].As<v8::Function>());
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.This());
-    map->Ref();
+    map->_ref();
 
     NanAsyncQueueWorker(new RenderWorker(map, callback));
 
