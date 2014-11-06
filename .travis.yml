@@ -9,7 +9,6 @@ env:
   matrix:
   - NODE_NVM_VERSION="0.10"
   global:
-  - AWS_S3_BUCKET: 'node-mapbox-gl-native'
   - secure: "BbLjMTgKGqbxrvHXvahGtt7NJVrCA2TiSGzgg1DdR3JVse5SUkG4FScKRwQWsWSMHUYQP4rCxEkaEB8FHlaXFVZ6hzHKIEPI7gKlcrH+WCZW0MibGO7L5/XhfFvFRhd5iXB5WjzjrEUzppShb1xxQWIRdhVZW0pMZpsJd48hynI="
   - secure: "cTYRVy66OUf9jYtgxIvRIlXwpykb59TK8s/ZKP21HgD+ARGbAPQ1YI8ozcDx6vB8FvspXAWz5pO9zbZWXPUEu2/dTZm+oYfrg0tGOXqEDjmc+GVfAHzKbQ2i9yD8wMqzfmwcD9GjOYXsddWuZAXOwUtTZUmG4T60gTheOZ4aqUA="
   - LD_LIBRARY_PATH: '/usr/local/lib'

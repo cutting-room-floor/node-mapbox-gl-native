@@ -15,10 +15,9 @@ void RenderWorker::Execute() {
     
     map_->get()->run();
 
-    image_ =  mbgl::util::compress_png(map_->getWidth(),
-                                       map_->getHeight(),
-                                       map_->readPixels(),
-                                       true);
+    image_ =  mbgl::util::compress_png(map_->getWidth() * map_->getRatio(),
+                                       map_->getHeight() * map_->getRatio(),
+                                       map_->ReadPixels());
 }
 
 void RenderWorker::HandleOKCallback() {
