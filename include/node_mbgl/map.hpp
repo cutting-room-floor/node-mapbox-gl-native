@@ -18,7 +18,7 @@ struct LoadOptions {
     double longitude;
     unsigned int width;
     unsigned int height;
-    unsigned int pixelRatio;
+    float ratio;
     std::string accessToken;
     std::vector<std::string> classes;
 };
@@ -33,14 +33,15 @@ public:
 
     void Resize(unsigned int width,
                 unsigned int height,
-                unsigned int pixelRatio);
+                float ratio);
+
+    unsigned int* ReadPixels();
 
     inline map_ptr get() { return map_; }
 
     inline unsigned int getWidth() { return width_; }
     inline unsigned int getHeight() { return height_; }
-
-    inline unsigned int* readPixels() { return view_.readPixels().get(); }
+    inline float getRatio() { return ratio_; }
 
     void _ref() { Ref(); }
     void _unref() { Unref(); }
@@ -64,6 +65,7 @@ private:
 
     unsigned int width_;
     unsigned int height_;
+    float ratio_;
 };
 
 } // ns node_mbgl

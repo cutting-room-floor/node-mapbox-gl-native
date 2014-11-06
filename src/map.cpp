@@ -65,7 +65,7 @@ const LoadOptions* Map::ParseOptions(v8::Local<v8::Object> options) {
     options_->longitude = options->Has(NanNew("center")) ? options->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
     options_->width = options->Has(NanNew("width")) ? options->Get(NanNew("width"))->IntegerValue() : 512;
     options_->height = options->Has(NanNew("height")) ? options->Get(NanNew("height"))->IntegerValue() : 512;
-    options_->pixelRatio = options->Has(NanNew("pixelRatio")) ? options->Get(NanNew("pixelRatio"))->IntegerValue() : 1;
+    options_->ratio = options->Has(NanNew("ratio")) ? options->Get(NanNew("ratio"))->IntegerValue() : 1;
 
     options_->accessToken = *NanUtf8String(options->Get(NanNew("accessToken")->ToString()));
 
@@ -150,12 +150,28 @@ NAN_METHOD(Map::Render) {
 
 void Map::Resize(unsigned int width,
                  unsigned int height,
-                 unsigned int pixelRatio) {
-    view_.resize(width, height, pixelRatio);
-    map_->resize(width, height, pixelRatio);
+                 float ratio) {
+    view_.resize(width, height, ratio);
+    map_->resize(width, height, ratio);
 
-    width_ = width * pixelRatio;
-    height_ = height * pixelRatio;
+    width_ = width;
+    height_ = height;
+    ratio_ = ratio;
+}
+
+unsigned int* Map::ReadPixels() {
+    auto pixels = view_.readPixels();
+
+    const int stride = width_ * ratio_ * 4;
+    auto tmp = std::unique_ptr<char[]>(new char[stride]());
+    char *rgba = reinterpret_cast<char *>(pixels.get());
+    for (int i = 0, j = height_ - 1; i < j; i++, j--) {
+        memcpy(tmp.get(), rgba + i * stride, stride);
+        memcpy(rgba + i * stride, rgba + j * stride, stride);
+        memcpy(rgba + j * stride, tmp.get(), stride);
+    }
+
+    return pixels.get();
 }
 
 }

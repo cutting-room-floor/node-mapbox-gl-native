@@ -20,7 +20,7 @@ void LoadWorker::Execute() {
     map_->get()->setStyleJSON(style_, base_directory_);
     map_->get()->setAppliedClasses(options_->classes);
 
-    map_->Resize(options_->width, options_->height, options_->pixelRatio);
+    map_->Resize(options_->width, options_->height, options_->ratio);
 
     map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
     map_->get()->setBearing(options_->bearing);
