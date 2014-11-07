@@ -7,6 +7,12 @@ namespace node_mbgl
 NAN_METHOD(Render) {
     NanScope();
 
+    if (args.Length() != 4)
+    {
+        NanThrowTypeError("Too few arguments");
+        NanReturnUndefined();
+    }
+
     if (!args[0]->IsObject())
     {
         NanThrowTypeError("first argument must be a style object");
@@ -48,6 +54,19 @@ NAN_METHOD(Render) {
             std::string classname = *v8::String::Utf8Value(classes->Get(i)->ToString());
             options->classes.push_back(classname);
         }
+    }
+
+    if (!args[2]->IsString())
+    {
+        NanThrowTypeError("third argument must be a string");
+        NanReturnUndefined();
+    }
+
+
+    if (!args[3]->IsFunction())
+    {
+        NanThrowTypeError("fourth argument must be a callback");
+        NanReturnUndefined();
     }
 
     const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
