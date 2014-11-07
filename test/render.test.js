@@ -20,10 +20,11 @@ function startFixtureServer(callback) {
         //console.log('STDOUT ' + data.toString());
     });
     p.stderr.on('data', function(data) {
-        //data = data.toString().split('\n').forEach(function(l) {
-        //    if (/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(data))  {
-        //    } else { console.error(l); }
-        //});
+        data = data.toString().split('\n').forEach(function(l) {
+            if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.lenggth > 0)  {
+                console.error(l);
+            }
+        });
     });
 
     // TODO how to determine it's ready?
@@ -47,19 +48,8 @@ function renderTest(style, info, dir) {
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-                t.ifError(err);
-                t.pass('generated image async');
-
-                var cmd = util.format('compare -metric MAE %s %s %s',
-                    path.join(dir, 'actual.png'),
-                    path.join(dir, 'expected.png'),
-                    (info.diff || 0.001)
-                );
-                
-                child_process.exec(cmd, function(err, stdout, stderr) {
-                    t.ifError(err);
-                    t.end();
-                });
+                t.error(err, 'generated image');
+                t.end();
             });
         });
     };
