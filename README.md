@@ -8,7 +8,7 @@ A library that renders map tiles in OpenGL using [mapbox-gl-native](https://gith
 ```
 var mbgl = require('mapbox-gl-native');
 
-var image = mbgl.renderTile(JSON.stringify(style), JSON.stringify(info), baseDirPath);
+mbgl.render(style, info, baseDirPath, function(err, image) {});
 ```
 
 ## Installing
