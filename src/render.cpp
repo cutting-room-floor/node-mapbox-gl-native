@@ -7,29 +7,43 @@ namespace node_mbgl
 NAN_METHOD(Render) {
     NanScope();
 
-    if (args.Length() != 4)
+    if (args.Length() != 3)
     {
-        NanThrowTypeError("Too few arguments");
+        NanThrowTypeError("Wrong number of arguments");
         NanReturnUndefined();
     }
 
+    if (!args[2]->IsFunction())
+    {
+        NanThrowTypeError("Callback must be a function");
+        NanReturnUndefined();
+    }
+
+    NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+
     if (!args[0]->IsObject())
     {
-        NanThrowTypeError("first argument must be a style object");
+        v8::Local<v8::Value> argv[] = {
+            NanError("First argument must be a style object"),
+        };
+        callback->Call(1, argv);
         NanReturnUndefined();
     }
     
+    if (!args[1]->IsObject())
+    {
+        v8::Local<v8::Value> argv[] = {
+            NanError("Second argument must be an options object"),
+        };
+        callback->Call(1, argv);
+        NanReturnUndefined();
+    }
+
     v8::Local<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
     v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
 
     v8::Handle<v8::Value> style_handle = args[0];
     const std::string style(*v8::String::Utf8Value(stringify->Call(JSON, 1, &style_handle)));
-
-    if (!args[1]->IsObject())
-    {
-        NanThrowTypeError("second argument must be an options object");
-        NanReturnUndefined();
-    }
 
     v8::Local<v8::Object> v8options = NanNew<v8::Object>();
     v8options = args[1]->ToObject();
@@ -56,21 +70,7 @@ NAN_METHOD(Render) {
         }
     }
 
-    if (!args[2]->IsString())
-    {
-        NanThrowTypeError("third argument must be a string");
-        NanReturnUndefined();
-    }
-
-
-    if (!args[3]->IsFunction())
-    {
-        NanThrowTypeError("fourth argument must be a callback");
-        NanReturnUndefined();
-    }
-
-    const std::string base_directory(*v8::String::Utf8Value(args[2].As<v8::String>()));
-    NanCallback *callback = new NanCallback(args[3].As<v8::Function>());
+    const std::string base_directory("/");
 
     NanAsyncQueueWorker(new RenderWorker(style,
                                          options,

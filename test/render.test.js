@@ -44,7 +44,7 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        mbgl.render(style, info, suitePath + '/', function(err, image) {
+        mbgl.render(style, info, function(err, image) {
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
