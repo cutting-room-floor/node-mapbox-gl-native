@@ -6,7 +6,7 @@
     "mapbox",
     "gl"
   ],
-  "main": "addon.js",
+  "main": "index.js",
   "private": true,
   "gypfile": true,
   "repository": {
@@ -20,13 +20,24 @@
     }
   ],
   "dependencies": {
-    "bindings": "^1.2.1",
-    "nan": "^1.4.1"
+    "nan": "^1.4.1",
+    "node-pre-gyp": "^0.5.31"
   },
+  "bundledDependencies":[
+    "node-pre-gyp"
+  ],
   "devDependencies": {
     "tape": "^3.0.3"
   },
   "scripts": {
+    "install": "node-pre-gyp install --fallback-to-build",
     "test": "./node_modules/.bin/tape test/**/*.test.js"
+  },
+  "binary": {
+    "module_name": "mapbox-gl-native",
+    "module_path": "./lib/",
+    "host": "https://mapbox-node-binary.s3.amazonaws.com",
+    "remote_path": "./{name}/v{version}",
+    "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
   }
 }

@@ -3,7 +3,7 @@
 /* jshint node:true */
 
 var test = require('tape');
-var addon = require('../addon.js');
+var addon = require('../index.js');
 
 test('single', function(t) {
   var obj = new addon.MyObject();
