@@ -1,10 +1,13 @@
 language: cpp
+
 os:
 - linux
 - osx
+
 compiler:
 - clang
 - gcc
+
 env:
   matrix:
   - NODE_NVM_VERSION="0.10"
@@ -12,23 +15,29 @@ env:
   - secure: "BbLjMTgKGqbxrvHXvahGtt7NJVrCA2TiSGzgg1DdR3JVse5SUkG4FScKRwQWsWSMHUYQP4rCxEkaEB8FHlaXFVZ6hzHKIEPI7gKlcrH+WCZW0MibGO7L5/XhfFvFRhd5iXB5WjzjrEUzppShb1xxQWIRdhVZW0pMZpsJd48hynI="
   - secure: "cTYRVy66OUf9jYtgxIvRIlXwpykb59TK8s/ZKP21HgD+ARGbAPQ1YI8ozcDx6vB8FvspXAWz5pO9zbZWXPUEu2/dTZm+oYfrg0tGOXqEDjmc+GVfAHzKbQ2i9yD8wMqzfmwcD9GjOYXsddWuZAXOwUtTZUmG4T60gTheOZ4aqUA="
   - LD_LIBRARY_PATH: '/usr/local/lib'
+
 before_install:
-- export platform=$(uname -s | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/")
-- export TRAVIS_OS_NAME=${platform}
-- if [[ "$platform" == "linux" ]] && [[ "$CXX" == "g++" ]]; then export CXX=g++-4.8; export CC=gcc-4.8; fi
+- export TRAVIS_OS_NAME=linux
 - ./scripts/install_nvm.sh
-- cd vendor/mapbox-gl-native && source ./scripts/local_mason.sh && cd ../../
+- cd ./vendor/mapbox-gl-native && source ./scripts/local_mason.sh && cd ../../
 - source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
 - source ./vendor/mapbox-gl-native/scripts/flags.sh
 - TMP_DIR=`mktemp -d -t XXXXXXXXXXX`
 - export PATH="${TMP_DIR}/bin":${PATH}
 - MBGL_PREFIX=${TMP_DIR} source ./scripts/install_mbgl.sh
-- if [[ "$platform" == "linux" ]]; then glxinfo; fi
+
 install:
 - npm install --build-from-source --clang
+
+before_script:
+ # Set the core file limit to unlimited so a core file is generated upon crash
+ - ulimit -c unlimited -S
+
 script:
 - npm test
+
 after_success:
 - ./scripts/travis_publish.sh
+
 git:
   submodules: true
