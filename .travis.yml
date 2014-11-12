@@ -37,7 +37,7 @@ script:
 - npm test
 
 after_success:
-- ./scripts/travis_publish.sh
+# - ./scripts/travis_publish.sh
 
 git:
   submodules: true
