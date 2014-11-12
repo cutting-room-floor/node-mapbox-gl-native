@@ -2,7 +2,7 @@
 #define ADDWORKER_H
 
 #include <nan.h>
-#include "myobject.h"
+#include <node_mbgl/myobject.h>
 
 class AddWorker : public NanAsyncWorker {
 public:

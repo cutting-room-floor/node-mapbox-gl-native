@@ -1,16 +1,30 @@
 {
-  "name": "passing-wrapped",
-  "version": "0.0.0",
-  "description": "Node.js Addons Example #8",
+  "name": "mapbox-gl-native",
+  "version": "0.0.1",
+  "description": "Node.js bindings to mapbox-gl-native",
+  "keywords": [
+    "mapbox",
+    "gl"
+  ],
   "main": "addon.js",
   "private": true,
   "gypfile": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mapbox/node-mapbox-gl-native.git"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "https://github.com/mapbox/node-mapbox-gl-native/blob/master/LICENSE.txt"
+    }
+  ],
   "dependencies": {
-    "bindings": "~1.2.1",
-    "nan": "~1.3.0"
+    "bindings": "^1.2.1",
+    "nan": "^1.4.1"
   },
   "devDependencies": {
-    "tape": "^3.0.2"
+    "tape": "^3.0.3"
   },
   "scripts": {
     "test": "./node_modules/.bin/tape test/**/*.test.js"

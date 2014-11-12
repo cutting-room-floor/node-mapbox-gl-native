@@ -3,13 +3,14 @@
     {
       "target_name": "addon",
       "sources": [
-        "addon.cc",
-        "myobject.cc",
-        "addworker.cc",
+        "src/addon.cc",
+        "src/myobject.cc",
+        "src/addworker.cc",
       ],
       "include_dirs": [
-        "<!(node -e \"require('nan')\")"
-      ]
-    }
+        "include",
+        "<!(node -e \"require('nan')\")",
+      ],
+    },
   ]
 }

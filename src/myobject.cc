@@ -1,6 +1,6 @@
 #include <node.h>
-#include "myobject.h"
-#include "addworker.h"
+#include <node_mbgl/myobject.h>
+#include <node_mbgl/addworker.h>
 
 MyObject::MyObject() {};
 MyObject::~MyObject() {};

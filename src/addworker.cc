@@ -1,4 +1,4 @@
-#include "addworker.h"
+#include <node_mbgl/addworker.h>
 #include <unistd.h>
 
 AddWorker::AddWorker(MyObject* obj, double value, NanCallback *callback)
