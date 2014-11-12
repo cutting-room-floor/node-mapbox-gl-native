@@ -1,8 +1,11 @@
-#ifndef ADDWORKER_H
-#define ADDWORKER_H
+#ifndef NODE_MBGL_ADDWORKER
+#define NODE_MBGL_ADDWORKER
 
 #include <nan.h>
-#include <node_mbgl/myobject.h>
+#include <node_mbgl/myobject.hpp>
+
+namespace node_mbgl
+{
 
 class AddWorker : public NanAsyncWorker {
 public:
@@ -18,4 +21,6 @@ private:
   double sum_;
 };
 
-#endif
+} // ns node_mbgl
+
+#endif // NODE_MBGL_ADDWORKER

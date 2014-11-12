@@ -1,7 +1,10 @@
-#ifndef MYOBJECT_H
-#define MYOBJECT_H
+#ifndef NODE_MBGL_MYOBJECT
+#define NODE_MBGL_MYOBJECT
 
 #include <nan.h>
+
+namespace node_mbgl
+{
 
 class MyObject : public node::ObjectWrap {
  public:
@@ -20,4 +23,6 @@ class MyObject : public node::ObjectWrap {
   double val_;
 };
 
-#endif
+} // ns node_mbgl
+
+#endif // NODE_MBGL_MYOBJECT

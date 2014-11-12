@@ -1,6 +1,9 @@
 #include <node.h>
-#include <node_mbgl/myobject.h>
-#include <node_mbgl/addworker.h>
+#include <node_mbgl/myobject.hpp>
+#include <node_mbgl/addworker.hpp>
+
+namespace node_mbgl
+{
 
 MyObject::MyObject() {};
 MyObject::~MyObject() {};
@@ -72,3 +75,4 @@ NAN_METHOD(MyObject::Add) {
   NanReturnUndefined();
 }
 
+} // ns node_mbgl

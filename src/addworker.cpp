@@ -1,5 +1,8 @@
-#include <node_mbgl/addworker.h>
+#include <node_mbgl/addworker.hpp>
 #include <unistd.h>
+
+namespace node_mbgl
+{
 
 AddWorker::AddWorker(MyObject* obj, double value, NanCallback *callback)
   : NanAsyncWorker(callback),
@@ -23,3 +26,5 @@ void AddWorker::HandleOKCallback() {
 
   callback->Call(2, argv);
 };
+
+} // ns node_mbgl

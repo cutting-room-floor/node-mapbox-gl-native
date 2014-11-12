@@ -3,9 +3,9 @@
     {
       "target_name": "<(module_name)",
       "sources": [
-        "src/addon.cc",
-        "src/myobject.cc",
-        "src/addworker.cc",
+        "src/node_mbgl.cpp",
+        "src/myobject.cpp",
+        "src/addworker.cpp",
       ],
       "include_dirs": [
         "include",
