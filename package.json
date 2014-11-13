@@ -33,7 +33,7 @@
   },
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
-    "test": "./node_modules/.bin/tape test/add_worker.test.js test/unit.test.js"
+    "test": "./node_modules/.bin/tape test/**/*.test.js && (cd ./node_modules/mapbox-gl-test-suite/ && (./bin/compare_images.py || true))"
   },
   "binary": {
     "module_name": "mapbox-gl-native",
