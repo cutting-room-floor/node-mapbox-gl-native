@@ -2,6 +2,7 @@
 #include <node_mbgl/map.hpp>
 #include <node_mbgl/display.hpp>
 #include <node_mbgl/addworker.hpp>
+#include <node_mbgl/render_worker.hpp>
 
 namespace node_mbgl
 {
@@ -25,6 +26,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
 
     // Prototype
     NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
     NODE_SET_PROTOTYPE_METHOD(tpl, "set", Set);
     NODE_SET_PROTOTYPE_METHOD(tpl, "add", Add);
 
@@ -69,10 +71,10 @@ const std::string Map::StringifyStyle(v8::Handle<v8::Value> style_handle) {
     return *NanUtf8String(stringify->Call(JSON, 1, &style_handle));
 }
 
-const LoadOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
+const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
     NanScope();
 
-    LoadOptions* options = new LoadOptions();
+    RenderOptions* options = new RenderOptions();
 
     options->zoom = obj->Has(NanNew("zoom")) ? obj->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = obj->Has(NanNew("bearing")) ? obj->Get(NanNew("bearing"))->NumberValue() : 0;
@@ -102,7 +104,7 @@ NAN_METHOD(Map::Load) {
 
     if (args.Length() != 1)
     {
-        NanThrowTypeError("Wrong number of arguments");
+        NanThrowError("Wrong number of arguments");
         NanReturnUndefined();
     }
 
@@ -114,30 +116,43 @@ NAN_METHOD(Map::Load) {
     
     const std::string style(StringifyStyle(args[0]));
     
-    /*
-    if (!args[1]->IsObject())
-    {
-        NanThrowTypeError("Second argument must be an options object");
-        NanReturnUndefined();
-    }
-
-    const LoadOptions* options(ParseOptions(args[1]->ToObject()));
-    */
-
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     const std::string base_directory("/");
 
     map->get()->setStyleJSON(style, base_directory);
 
-    /*
-    map->get()->setAppliedClasses(options->classes);
+    NanReturnUndefined();
+}
 
-    map->Resize(options->width, options->height, options->ratio);
+NAN_METHOD(Map::Render) {
+    NanScope();
 
-    map->get()->setLonLatZoom(options->longitude, options->latitude, options->zoom);
-    map->get()->setBearing(options->bearing);
-    */
+    if (args.Length() != 2)
+    {
+        NanThrowError("Wrong number of arguments");
+        NanReturnUndefined();
+    }
+
+    if (!args[1]->IsFunction())
+    {
+        NanThrowTypeError("Callback must be a function");
+        NanReturnUndefined();
+    }
+
+    NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
+
+    if (!args[0]->IsObject())
+    {
+        NanThrowTypeError("First argument must be an options object");
+        NanReturnUndefined();
+    }
+
+    const RenderOptions* options(ParseOptions(args[1]->ToObject()));
+
+    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
+
+    NanAsyncQueueWorker(new RenderWorker(map, options, callback));
 
     NanReturnUndefined();
 }
@@ -161,6 +176,21 @@ NAN_METHOD(Map::Add) {
     NanAsyncQueueWorker(new AddWorker(map, value, callback));
 
     NanReturnUndefined();
+}
+
+unsigned int* Map::ReadPixels(const int width, const int height) {
+    auto pixels = view_.readPixels();
+
+    const int stride = width * 4;
+    auto tmp = std::unique_ptr<char[]>(new char[stride]());
+    char *rgba = reinterpret_cast<char *>(pixels.get());
+    for (int i = 0, j = height - 1; i < j; i++, j--) {
+        memcpy(tmp.get(), rgba + i * stride, stride);
+        memcpy(rgba + i * stride, rgba + j * stride, stride);
+        memcpy(rgba + j * stride, tmp.get(), stride);
+    }
+
+    return pixels.get();
 }
 
 } // ns node_mbgl

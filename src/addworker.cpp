@@ -4,16 +4,16 @@
 namespace node_mbgl
 {
 
-AddWorker::AddWorker(Map* obj, double value, NanCallback *callback)
+AddWorker::AddWorker(Map* map, double value, NanCallback *callback)
   : NanAsyncWorker(callback),
-  obj_(obj),
+  map_(map),
   value_(value) {}
 
 AddWorker::~AddWorker() {}
 
 void AddWorker::Execute() {
   sleep(value_);
-  sum_ = obj_->Val() + value_;
+  sum_ = map_->Val() + value_;
 }
 
 void AddWorker::HandleOKCallback() {

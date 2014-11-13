@@ -9,14 +9,14 @@ namespace node_mbgl
 
 class AddWorker : public NanAsyncWorker {
 public:
-  AddWorker(Map* obj, double value, NanCallback *callback);
+  AddWorker(Map* map, double value, NanCallback *callback);
   ~AddWorker();
 
   void Execute();
   void HandleOKCallback();
 
 private:
-  Map* obj_;
+  Map* map_;
   double value_;
   double sum_;
 };

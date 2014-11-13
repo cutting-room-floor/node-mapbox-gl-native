@@ -6,6 +6,7 @@
         "src/node_mbgl.cpp",
         "src/map.cpp",
         "src/addworker.cpp",
+        "src/render_worker.cpp",
       ],
       "include_dirs": [
         "include",
