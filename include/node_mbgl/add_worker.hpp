@@ -1,5 +1,5 @@
-#ifndef NODE_MBGL_ADDWORKER
-#define NODE_MBGL_ADDWORKER
+#ifndef NODE_MBGL_ADD_WORKER
+#define NODE_MBGL_ADD_WORKER
 
 #include <nan.h>
 #include <node_mbgl/map.hpp>
@@ -23,4 +23,4 @@ private:
 
 } // ns node_mbgl
 
-#endif // NODE_MBGL_ADDWORKER
+#endif // NODE_MBGL_ADD_WORKER

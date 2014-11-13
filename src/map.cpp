@@ -1,7 +1,7 @@
 #include <node.h>
 #include <node_mbgl/map.hpp>
 #include <node_mbgl/display.hpp>
-#include <node_mbgl/addworker.hpp>
+#include <node_mbgl/add_worker.hpp>
 #include <node_mbgl/render_worker.hpp>
 
 namespace node_mbgl

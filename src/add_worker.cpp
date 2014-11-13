@@ -1,4 +1,4 @@
-#include <node_mbgl/addworker.hpp>
+#include <node_mbgl/add_worker.hpp>
 #include <unistd.h>
 
 namespace node_mbgl
