@@ -40,7 +40,7 @@ NAN_METHOD(Map::New) {
     Map* map = new Map();
     map->Wrap(args.Holder());
 
-    NanReturnValue(args.Holder());
+    NanReturnHolder();
 }
 
 NAN_METHOD(Map::NewInstance) {
@@ -148,7 +148,7 @@ NAN_METHOD(Map::Set) {
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
     map->val_ = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
 
-    NanReturnValue(args.Holder());
+    NanReturnHolder();
 }
 
 NAN_METHOD(Map::Add) {
