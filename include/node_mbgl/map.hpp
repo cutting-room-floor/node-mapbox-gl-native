@@ -32,10 +32,10 @@ public:
     static NAN_METHOD(Load);
     static NAN_METHOD(Render);
 
+    void Resize(const int width, const int height, const float ratio);
     unsigned int* ReadPixels(const int width, const int height);
 
     inline map_ptr get() { return map_; }
-    inline mbgl::HeadlessView getView() { return view_; }
 
     static NAN_METHOD(Set);
     static NAN_METHOD(Add);

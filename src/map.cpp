@@ -178,6 +178,11 @@ NAN_METHOD(Map::Add) {
     NanReturnUndefined();
 }
 
+void Map::Resize(const int width, const int height, const float ratio) {
+    view_.resize(width, height, ratio);
+    map_->resize(width, height, ratio);
+}
+
 unsigned int* Map::ReadPixels(const int width, const int height) {
     auto pixels = view_.readPixels();
 

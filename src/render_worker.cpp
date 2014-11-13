@@ -16,11 +16,7 @@ RenderWorker::~RenderWorker() {}
 void RenderWorker::Execute() {
     map_->get()->setAppliedClasses(options_->classes);
 
-    map_->getView().resize(options_->width,
-                          options_->height,
-                          options_->ratio);
-
-    map_->get()->resize(options_->width, options_->height, options_->ratio);
+    map_->Resize(options_->width, options_->height, options_->ratio);
 
     map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
     map_->get()->setBearing(options_->bearing);
