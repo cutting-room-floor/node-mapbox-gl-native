@@ -4,41 +4,21 @@
 #include <node.h>
 #include <nan.h>
 
-#include <string>
-#include <vector>
+#include <node_mbgl/map.hpp>
 
 namespace node_mbgl
 {
 
-struct renderWorkerOptions {
-    double zoom;
-    double bearing;
-    double latitude;
-    double longitude;
-    unsigned int width;
-    unsigned int height;
-    unsigned int pixelRatio;
-    std::string accessToken;
-    std::vector<std::string> classes;
-};
-
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(const std::string &style,
-                 const renderWorkerOptions *options,
-                 const std::string &base_directory,
-                 NanCallback *callback);
+    RenderWorker(Map *map, NanCallback *callback);
     ~RenderWorker();
-
-    const std::string Render();
 
     void Execute();
     void HandleOKCallback();
 
 private:
-    std::string style_;
-    const renderWorkerOptions *options_;
-    const std::string base_directory_;
+    Map *map_;
     std::string image_;
 };
 

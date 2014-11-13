@@ -44,12 +44,17 @@ function renderTest(style, info, dir) {
             clearTimeout(watchdog);
         });
 
-        mbgl.render(style, info, function(err, image) {
-            mkdirp.sync(dir);
+        var map = new mbgl.Map();
+        map.load(style, info, function(err) {
+            t.ifError(err);
+            map.render(function(err, image) {
+                mkdirp.sync(dir);
 
-            fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-                t.error(err, 'generated image');
-                t.end();
+                fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
+                    if (err) t.fail(err);
+                    t.pass('generated image async');
+                    t.end();
+                });
             });
         });
     };

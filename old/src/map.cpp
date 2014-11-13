@@ -1,0 +1,183 @@
+#include <node_mbgl/map.hpp>
+#include <node_mbgl/display.hpp>
+#include <node_mbgl/load_worker.hpp>
+#include <node_mbgl/render_worker.hpp>
+
+namespace node_mbgl
+{
+
+v8::Persistent<v8::FunctionTemplate> Map::constructor;
+
+Map::Map() : node::ObjectWrap(),
+    view_(display_) {
+    map_ = std::make_shared<mbgl::Map>(view_);
+}
+
+Map::~Map() {}
+
+void Map::Init(v8::Handle<v8::Object> exports) {
+    NanScope();
+
+    v8::Local<v8::FunctionTemplate> tpl = 
+        NanNew<v8::FunctionTemplate>(New);
+    tpl->SetClassName(NanNew("Map"));
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+    // Prototype
+    NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
+
+    NanAssignPersistent(constructor, tpl);
+    exports->Set(NanNew("Map"), tpl->GetFunction());
+}
+
+NAN_METHOD(Map::New) {
+    NanScope();
+
+    if (!args.IsConstructCall())
+    {
+        NanThrowError("Cannot call constructor as function, you need to use 'new' keyword");
+        NanReturnUndefined();
+    }
+
+    Map *map = new Map();
+    map->Wrap(args.This());
+    NanReturnValue(args.This());
+}
+
+const std::string Map::StringifyStyle(v8::Handle<v8::Value> style_handle) {
+    NanScope();
+
+    v8::Handle<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
+    v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
+
+    return *NanUtf8String(stringify->Call(JSON, 1, &style_handle));
+}
+
+const LoadOptions* Map::ParseOptions(v8::Local<v8::Object> options) {
+    NanScope();
+
+    LoadOptions *options_ = new LoadOptions();
+
+    options_->zoom = options->Has(NanNew("zoom")) ? options->Get(NanNew("zoom"))->NumberValue() : 0;
+    options_->bearing = options->Has(NanNew("bearing")) ? options->Get(NanNew("bearing"))->NumberValue() : 0;
+    options_->latitude = options->Has(NanNew("center")) ? options->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue() : 0;
+    options_->longitude = options->Has(NanNew("center")) ? options->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
+    options_->width = options->Has(NanNew("width")) ? options->Get(NanNew("width"))->IntegerValue() : 512;
+    options_->height = options->Has(NanNew("height")) ? options->Get(NanNew("height"))->IntegerValue() : 512;
+    options_->ratio = options->Has(NanNew("ratio")) ? options->Get(NanNew("ratio"))->IntegerValue() : 1;
+
+    options_->accessToken = *NanUtf8String(options->Get(NanNew("accessToken")->ToString()));
+
+    if (options->Has(NanNew("classes"))) {
+        v8::Local<v8::Array> classes(options->Get(NanNew("classes"))->ToObject().As<v8::Array>());
+        int length = classes->Length();
+        options_->classes.resize(length);
+        for (int i = 0; i < length; i++) {
+            std::string classname = *NanUtf8String(classes->Get(i)->ToString());
+            options_->classes.push_back(classname);
+        }
+    }
+
+    return options_;
+}
+
+NAN_METHOD(Map::Load) {
+    NanScope();
+
+    if (args.Length() != 3)
+    {
+        NanThrowTypeError("Wrong number of arguments");
+        NanReturnUndefined();
+    }
+
+    if (!args[2]->IsFunction())
+    {
+        NanThrowTypeError("Callback must be a function");
+        NanReturnUndefined();
+    }
+
+    NanCallback *callback = new NanCallback(args[2].As<v8::Function>());
+
+    if (!args[0]->IsObject())
+    {
+        v8::Local<v8::Value> argv[] = {
+            NanError("First argument must be a style object"),
+        };
+        callback->Call(1, argv);
+        NanReturnUndefined();
+    }
+    
+    const std::string style(StringifyStyle(args[0]));
+    
+    if (!args[1]->IsObject())
+    {
+        v8::Local<v8::Value> argv[] = {
+            NanError("Second argument must be an options object"),
+        };
+        callback->Call(1, argv);
+        NanReturnUndefined();
+    }
+
+    const LoadOptions *options(ParseOptions(args[1]->ToObject()));
+
+    Map *map = node::ObjectWrap::Unwrap<Map>(args.This());
+    map->_ref();
+
+    const std::string base_directory("/");
+
+    NanAsyncQueueWorker(new LoadWorker(map,
+                                       style,
+                                       options,
+                                       base_directory,
+                                       callback));
+
+    NanReturnUndefined();
+}
+
+NAN_METHOD(Map::Render) {
+    NanScope();
+
+    if (!args[0]->IsFunction())
+    {
+        NanThrowTypeError("Callback must be a function");
+        NanReturnUndefined();
+    }
+
+    NanCallback *callback = new NanCallback(args[0].As<v8::Function>());
+
+    Map *map = node::ObjectWrap::Unwrap<Map>(args.This());
+    map->_ref();
+
+    NanAsyncQueueWorker(new RenderWorker(map, callback));
+
+    NanReturnUndefined();
+}
+
+void Map::Resize(unsigned int width,
+                 unsigned int height,
+                 float ratio) {
+    view_.resize(width, height, ratio);
+    map_->resize(width, height, ratio);
+
+    width_ = width;
+    height_ = height;
+    ratio_ = ratio;
+}
+
+unsigned int* Map::ReadPixels() {
+    auto pixels = view_.readPixels();
+
+    const int stride = width_ * ratio_ * 4;
+    auto tmp = std::unique_ptr<char[]>(new char[stride]());
+    char *rgba = reinterpret_cast<char *>(pixels.get());
+    for (int i = 0, j = height_ - 1; i < j; i++, j--) {
+        memcpy(tmp.get(), rgba + i * stride, stride);
+        memcpy(rgba + i * stride, rgba + j * stride, stride);
+        memcpy(rgba + j * stride, tmp.get(), stride);
+    }
+
+    return pixels.get();
+}
+
+}

@@ -1,65 +1,23 @@
 #include <node_mbgl/render_worker.hpp>
-
-#include <mbgl/map/map.hpp>
 #include <mbgl/util/image.hpp>
-#include <mbgl/util/std.hpp>
-
-#include <mbgl/platform/default/headless_display.hpp>
-
-#include <node_mbgl/display.hpp>
 
 namespace node_mbgl
 {
 
-RenderWorker::RenderWorker(const std::string &style,
-                           const renderWorkerOptions *options,
-                           const std::string &base_directory,
-                           NanCallback *callback)
+RenderWorker::RenderWorker(Map *map, NanCallback *callback)
     : NanAsyncWorker(callback),
-      style_(style),
-      options_(options),
-      base_directory_(base_directory) {}
+    map_(map) {}
 
 RenderWorker::~RenderWorker() {}
 
-const std::string RenderWorker::Render() {
-    mbgl::HeadlessView view(display_);
-    mbgl::Map map(view);
-
-    if (!options_->accessToken.empty()) {
-        map.setAccessToken(options_->accessToken);
-    }
-
-    map.setStyleJSON(style_, base_directory_);
-    map.setAppliedClasses(options_->classes);
-
-    view.resize(options_->width, options_->height, options_->pixelRatio);
-    map.resize(options_->width, options_->height, options_->pixelRatio);
-    map.setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
-    map.setBearing(options_->bearing);
-
-    // Run the loop. It will terminate when we don't have any further listeners.
-    map.run();
-
-    const unsigned int w = options_->width * options_->pixelRatio;
-    const unsigned int h = options_->height * options_->pixelRatio;
-
-    auto pixels = view.readPixels();
-
-    const int stride = w * 4;
-    auto tmp = std::unique_ptr<char[]>(new char[stride]());
-    char *rgba = reinterpret_cast<char *>(pixels.get());
-    for (int i = 0, j = options_->height - 1; i < j; i++, j--) {
-        memcpy(tmp.get(), rgba + i * stride, stride);
-        memcpy(rgba + i * stride, rgba + j * stride, stride);
-        memcpy(rgba + j * stride, tmp.get(), stride);
-    }
-
-    return mbgl::util::compress_png(w, h, pixels.get());
-}
-
 void RenderWorker::Execute() {
-    image_ = Render();
+    // Run the loop. It will terminate when we don't have any further listeners.
+    
+    map_->get()->run();
+
+    image_ =  mbgl::util::compress_png(map_->getWidth() * map_->getRatio(),
+                                       map_->getHeight() * map_->getRatio(),
+                                       map_->ReadPixels());
 }
 
 void RenderWorker::HandleOKCallback() {
@@ -71,6 +29,8 @@ void RenderWorker::HandleOKCallback() {
     };
 
     callback->Call(2, argv);
+
+    map_->_unref();
 };
 
 } // ns node_mbgl
