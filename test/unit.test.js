@@ -56,7 +56,7 @@ test('bad render callback', function(t) {
 test.skip('good render args', function(t) {
     var map = new mbgl.Map();
     t.doesNotThrow(function() {
-        map.render({}, function() {});
+        map.render({}, function(err, image) {});
     }, 'does not throw error');
     t.end();
 });

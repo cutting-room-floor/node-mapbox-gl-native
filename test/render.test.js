@@ -17,17 +17,17 @@ function startFixtureServer(callback) {
     var e = null;
     var p = child_process.spawn(path.join(suitePath, 'bin/server.py'));
     p.stdout.on('data', function(data) {
-        //console.log('STDOUT ' + data.toString());
+        // console.log('STDOUT ' + data.toString());
     });
     p.stderr.on('data', function(data) {
         data = data.toString().split('\n').forEach(function(l) {
-            if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.lenggth > 0)  {
+            if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.length > 0)  {
                 console.error(l);
             }
         });
     });
 
-    // TODO how to determine it's ready?
+    // TODO: how to determine it's ready?
     setTimeout(function() {
         callback(e, p);
     }, 100);
@@ -45,16 +45,14 @@ function renderTest(style, info, dir) {
         });
 
         var map = new mbgl.Map();
-        map.load(style, info, function(err) {
-            t.ifError(err);
-            map.render(function(err, image) {
-                mkdirp.sync(dir);
+        map.load(style);
+        map.render(info, function(err, image) {
+            mkdirp.sync(dir);
 
-                fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-                    if (err) t.fail(err);
-                    t.pass('generated image async');
-                    t.end();
-                });
+            fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
+                if (err) t.fail(err);
+                t.pass('generated image async');
+                t.end();
             });
         });
     };
