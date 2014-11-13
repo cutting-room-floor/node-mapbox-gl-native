@@ -24,6 +24,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // Prototype
+    NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "set", Set);
     NODE_SET_PROTOTYPE_METHOD(tpl, "add", Add);
 
@@ -57,6 +58,88 @@ NAN_METHOD(Map::NewInstance) {
     v8::Local<v8::Object> instance = cons->NewInstance(argc, argv);
 
     NanReturnValue(instance);
+}
+
+const std::string Map::StringifyStyle(v8::Handle<v8::Value> style_handle) {
+    NanScope();
+
+    v8::Handle<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
+    v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
+
+    return *NanUtf8String(stringify->Call(JSON, 1, &style_handle));
+}
+
+const LoadOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
+    NanScope();
+
+    LoadOptions* options = new LoadOptions();
+
+    options->zoom = obj->Has(NanNew("zoom")) ? obj->Get(NanNew("zoom"))->NumberValue() : 0;
+    options->bearing = obj->Has(NanNew("bearing")) ? obj->Get(NanNew("bearing"))->NumberValue() : 0;
+    options->latitude = obj->Has(NanNew("center")) ? obj->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue() : 0;
+    options->longitude = obj->Has(NanNew("center")) ? obj->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
+    options->width = obj->Has(NanNew("width")) ? obj->Get(NanNew("width"))->IntegerValue() : 512;
+    options->height = obj->Has(NanNew("height")) ? obj->Get(NanNew("height"))->IntegerValue() : 512;
+    options->ratio = obj->Has(NanNew("ratio")) ? obj->Get(NanNew("ratio"))->IntegerValue() : 1;
+
+    options->accessToken = *NanUtf8String(obj->Get(NanNew("accessToken")->ToString()));
+
+    if (obj->Has(NanNew("classes"))) {
+        v8::Local<v8::Array> classes(obj->Get(NanNew("classes"))->ToObject().As<v8::Array>());
+        int length = classes->Length();
+        options->classes.resize(length);
+        for (int i = 0; i < length; i++) {
+            std::string classname = *NanUtf8String(classes->Get(i)->ToString());
+            options->classes.push_back(classname);
+        }
+    }
+
+    return options;
+}
+
+NAN_METHOD(Map::Load) {
+    NanScope();
+
+    if (args.Length() != 1)
+    {
+        NanThrowTypeError("Wrong number of arguments");
+        NanReturnUndefined();
+    }
+
+    if (!args[0]->IsObject())
+    {
+        NanThrowTypeError("First argument must be a style object");
+        NanReturnUndefined();
+    }
+    
+    const std::string style(StringifyStyle(args[0]));
+    
+    /*
+    if (!args[1]->IsObject())
+    {
+        NanThrowTypeError("Second argument must be an options object");
+        NanReturnUndefined();
+    }
+
+    const LoadOptions* options(ParseOptions(args[1]->ToObject()));
+    */
+
+    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
+
+    const std::string base_directory("/");
+
+    map->get()->setStyleJSON(style, base_directory);
+
+    /*
+    map->get()->setAppliedClasses(options->classes);
+
+    map->Resize(options->width, options->height, options->ratio);
+
+    map->get()->setLonLatZoom(options->longitude, options->latitude, options->zoom);
+    map->get()->setBearing(options->bearing);
+    */
+
+    NanReturnUndefined();
 }
 
 NAN_METHOD(Map::Set) {

@@ -27,6 +27,7 @@ typedef std::shared_ptr<mbgl::Map> map_ptr;
 class Map : public node::ObjectWrap {
 public:
     static void Init(v8::Handle<v8::Object> exports);
+    static NAN_METHOD(Load);
     static NAN_METHOD(Set);
     static NAN_METHOD(Add);
     double Val() const { return val_; }
@@ -38,6 +39,11 @@ private:
     static v8::Persistent<v8::Function> constructor;
     static NAN_METHOD(New);
     static NAN_METHOD(NewInstance);
+
+    static const std::string StringifyStyle(v8::Handle<v8::Value> style_handle);
+    static const LoadOptions* ParseOptions(v8::Local<v8::Object> obj);
+
+    inline map_ptr get() { return map_; }
 
     mbgl::HeadlessView view_;
     map_ptr map_;
