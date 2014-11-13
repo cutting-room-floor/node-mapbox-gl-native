@@ -4,7 +4,7 @@
       "target_name": "<(module_name)",
       "sources": [
         "src/node_mbgl.cpp",
-        "src/myobject.cpp",
+        "src/map.cpp",
         "src/addworker.cpp",
       ],
       "include_dirs": [

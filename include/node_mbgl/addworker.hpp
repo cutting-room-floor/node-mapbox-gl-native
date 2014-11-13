@@ -2,21 +2,21 @@
 #define NODE_MBGL_ADDWORKER
 
 #include <nan.h>
-#include <node_mbgl/myobject.hpp>
+#include <node_mbgl/map.hpp>
 
 namespace node_mbgl
 {
 
 class AddWorker : public NanAsyncWorker {
 public:
-  AddWorker(MyObject* obj, double value, NanCallback *callback);
+  AddWorker(Map* obj, double value, NanCallback *callback);
   ~AddWorker();
 
   void Execute();
   void HandleOKCallback();
 
 private:
-  MyObject* obj_;
+  Map* obj_;
   double value_;
   double sum_;
 };

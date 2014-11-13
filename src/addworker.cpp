@@ -4,7 +4,7 @@
 namespace node_mbgl
 {
 
-AddWorker::AddWorker(MyObject* obj, double value, NanCallback *callback)
+AddWorker::AddWorker(Map* obj, double value, NanCallback *callback)
   : NanAsyncWorker(callback),
   obj_(obj),
   value_(value) {}

@@ -6,7 +6,7 @@ var test = require('tape');
 var addon = require('../index.js');
 
 test('single', function(t) {
-  var obj = new addon.MyObject();
+  var obj = new addon.Map();
   obj.set(10);
   obj.add(1, function(err, result) {
     t.ifError(err);
@@ -20,7 +20,7 @@ test('multiple', function(t) {
   t.plan(remaining * 2);
 
   for (var i = 0; i < remaining; i++) {
-    var obj = new addon.MyObject();
+    var obj = new addon.Map();
     obj.set(i);
     obj.add(i, (function(i) {
       return function(err, result) {
@@ -35,7 +35,7 @@ test('concurrent', function(t) {
   var remaining = 5;
   t.plan(remaining * 3);
 
-  var obj = new addon.MyObject();
+  var obj = new addon.Map();
   for (var i = 0; i < remaining; i++) {
     obj.set(i);
     obj.add(i, (function(i) {
