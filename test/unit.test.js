@@ -56,10 +56,22 @@ test.skip('empty', function(t) {
 
 test('load', function(t) {
     var map = new mbgl.Map();
+
+    var empty = function() {
+        map.load();
+    };
+    t.throws(empty, /Wrong number of arguments/, "Throws error");
+
+    var string = function() {
+        map.load('');
+    };
+    t.throws(string, /First argument must be a style object/, "Throws error");
+
     var load = function() {
         map.load({});
     };
     t.doesNotThrow(load, "Does not throw error");
+
     t.end();
 });
 
