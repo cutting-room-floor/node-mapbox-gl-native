@@ -44,7 +44,7 @@ public:
     static NAN_METHOD(Set);
     static NAN_METHOD(Add);
 
-    double Val() const { return val_; }
+    inline double Val() const { return val_; }
 
 private:
     Map();

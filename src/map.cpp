@@ -163,15 +163,17 @@ NAN_METHOD(Map::Set) {
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
     map->val_ = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
 
-    NanReturnHolder();
+    NanReturnUndefined();
 }
 
 NAN_METHOD(Map::Add) {
     NanScope();
 
-    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-    double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
     NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
+
+    const double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+
+    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     NanAsyncQueueWorker(new AddWorker(map, value, callback));
 
