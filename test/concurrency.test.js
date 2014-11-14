@@ -29,7 +29,7 @@ if (style.glyphs) {
     style.glyphs = style.glyphs.replace(/^local:\/\//, '');
 }
 
-test(dir + ' ' + key, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));
+test.skip(dir + ' ' + key, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));
 
 function renderTest(style, info, dir) {
     return function (t) {

@@ -21,7 +21,7 @@ void AddWorker::HandleOKCallback() {
 
   v8::Local<v8::Value> argv[] = {
     NanNull(),
-    NanNew(sum_)
+    NanNew<v8::Number>(sum_)
   };
 
   callback->Call(2, argv);
