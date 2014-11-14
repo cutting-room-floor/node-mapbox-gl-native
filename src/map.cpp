@@ -4,8 +4,6 @@
 #include <node_mbgl/add_worker.hpp>
 #include <node_mbgl/render_worker.hpp>
 
-#include <iostream>
-
 namespace node_mbgl
 {
 
@@ -85,9 +83,6 @@ const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
     options->width = obj->Has(NanNew("width")) ? obj->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = obj->Has(NanNew("height")) ? obj->Get(NanNew("height"))->IntegerValue() : 512;
     options->ratio = obj->Has(NanNew("ratio")) ? obj->Get(NanNew("ratio"))->IntegerValue() : 1;
-
-    std::cout << "width: " << options->width << '\n' <<
-        "height: " << options->height << '\n';
 
     options->accessToken = *NanUtf8String(obj->Get(NanNew("accessToken")->ToString()));
 
