@@ -53,15 +53,17 @@ test('bad render callback', function(t) {
     t.end();
 });
 
-test.skip('good render args', function(t) {
+test('good render args', function(t) {
     var map = new mbgl.Map();
+    // map.render will segfault if called before map.load
+    map.load({});
     t.doesNotThrow(function() {
-        map.render({}, function(err, image) {});
+        map.render({}, function() {});
     }, 'does not throw error');
     t.end();
 });
 
-test.skip('empty', function(t) {
+test('empty', function(t) {
     var map = new mbgl.Map();
     map.load({});
     map.render({}, function(err, image) {

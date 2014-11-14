@@ -6,9 +6,7 @@ var test = require('tape').test;
 var mbgl = require('../index.js');
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
 var child_process = require('child_process');
-var http = require('http');
 var mkdirp = require('mkdirp');
 
 var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
@@ -16,9 +14,6 @@ var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'
 function startFixtureServer(callback) {
     var e = null;
     var p = child_process.spawn(path.join(suitePath, 'bin/server.py'));
-    p.stdout.on('data', function(data) {
-        // console.log('STDOUT ' + data.toString());
-    });
     p.stderr.on('data', function(data) {
         data = data.toString().split('\n').forEach(function(l) {
             if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.length > 0)  {
@@ -27,10 +22,7 @@ function startFixtureServer(callback) {
         });
     });
 
-    // TODO: how to determine it's ready?
-    setTimeout(function() {
-        callback(e, p);
-    }, 100);
+    callback(e, p);
 }
 
 function renderTest(style, info, dir) {
@@ -47,6 +39,7 @@ function renderTest(style, info, dir) {
         var map = new mbgl.Map();
         map.load(style);
         map.render(info, function(err, image) {
+            t.error(err);
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
@@ -70,7 +63,6 @@ startFixtureServer(function(err, p) {
     }).forEach(function(dir) {
         var style = require(path.join(suitePath, 'tests', dir, 'style.json')),
             info  = require(path.join(suitePath, 'tests', dir, 'info.json'));
-
 
         for (var k in style.sources) {
             if (style.sources[k].tiles)
