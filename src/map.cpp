@@ -4,6 +4,8 @@
 #include <node_mbgl/add_worker.hpp>
 #include <node_mbgl/render_worker.hpp>
 
+#include <iostream>
+
 namespace node_mbgl
 {
 
@@ -84,6 +86,9 @@ const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
     options->height = obj->Has(NanNew("height")) ? obj->Get(NanNew("height"))->IntegerValue() : 512;
     options->ratio = obj->Has(NanNew("ratio")) ? obj->Get(NanNew("ratio"))->IntegerValue() : 1;
 
+    std::cout << "width: " << options->width << '\n' <<
+        "height: " << options->height << '\n';
+
     options->accessToken = *NanUtf8String(obj->Get(NanNew("accessToken")->ToString()));
 
     if (obj->Has(NanNew("classes"))) {
@@ -148,7 +153,7 @@ NAN_METHOD(Map::Render) {
         NanReturnUndefined();
     }
 
-    const RenderOptions* options(ParseOptions(args[1]->ToObject()));
+    const RenderOptions* options(ParseOptions(args[0]->ToObject()));
 
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
@@ -178,12 +183,17 @@ NAN_METHOD(Map::Add) {
     NanReturnUndefined();
 }
 
-void Map::Resize(const int width, const int height, const float ratio) {
+void Map::Resize(const unsigned int width,
+                 const unsigned int height,
+                 const float ratio)
+{
     view_.resize(width, height, ratio);
     map_->resize(width, height, ratio);
 }
 
-unsigned int* Map::ReadPixels(const int width, const int height) {
+unsigned int* Map::ReadPixels(const unsigned int width,
+                              const unsigned int height)
+{
     auto pixels = view_.readPixels();
 
     const int stride = width * 4;
