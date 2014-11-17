@@ -10,27 +10,14 @@ var util = require('util');
 var child_process = require('child_process');
 var http = require('http');
 var mkdirp = require('mkdirp');
+var http = require('http');
+var st = require('st');
 
 var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
+var server = http.createServer(st({path: suitePath}));
 
 function startFixtureServer(callback) {
-    var e = null;
-    var p = child_process.spawn(path.join(suitePath, 'bin/server.py'));
-    p.stdout.on('data', function(data) {
-        //console.log('STDOUT ' + data.toString());
-    });
-    p.stderr.on('data', function(data) {
-        data = data.toString().split('\n').forEach(function(l) {
-            if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.lenggth > 0)  {
-                console.error(l);
-            }
-        });
-    });
-
-    // TODO how to determine it's ready?
-    setTimeout(function() {
-        callback(e, p);
-    }, 100);
+    server.listen(2900, callback);
 }
 
 function renderTest(style, info, dir) {
@@ -55,7 +42,7 @@ function renderTest(style, info, dir) {
     };
 }
 
-startFixtureServer(function(err, p) {
+startFixtureServer(function(err) {
     if (err) throw err;
 
     function rewriteLocalSchema(uri) {
@@ -83,7 +70,7 @@ startFixtureServer(function(err, p) {
     });
 
     test('cleanup', function(t) {
-        p.kill();
+        server.close();
         t.end();
     });
 });
