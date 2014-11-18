@@ -6,22 +6,16 @@ var test = require('tape').test;
 var mbgl = require('../index.js');
 var fs = require('fs');
 var path = require('path');
-var child_process = require('child_process');
+var http = require('http');
+var st = require('st');
 
 var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
+var server = http.createServer(st({path: suitePath}));
 
 function startFixtureServer(callback) {
-    var e = null;
-    var p = child_process.spawn(path.join(suitePath, 'bin/server.py'), [2800]);
-    p.stderr.on('data', function(data) {
-        data = data.toString().split('\n').forEach(function(l) {
-            if (!/^127\.0\.0\.1.+\"GET\s.+\sHTTP\/1\.1\"\s200\s.+$/.test(l) && l.length > 0)  {
-                console.error(l);
-            }
-        });
+    server.listen(0, function(err) {
+        callback(err, err ? null : server.address().port);
     });
-
-    callback(e, p);
 }
 
 function renderTest(style, info, dir) {
@@ -41,11 +35,11 @@ function renderTest(style, info, dir) {
     };
 }
 
-startFixtureServer(function(err, p) {
+startFixtureServer(function(err, port) {
     if (err) throw err;
 
     function rewriteLocalSchema(uri) {
-        return uri.replace(/^local:\/\//, 'http://127.0.0.1:2800/');
+        return uri.replace(/^local:\/\//, 'http://127.0.0.1:'+ port +'/');
     }
 
     var dir = 'line-join';
@@ -67,7 +61,7 @@ startFixtureServer(function(err, p) {
     }
 
     test('cleanup', function(t) {
-        p.kill();
+        server.close();
         t.end();
     });
 });

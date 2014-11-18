@@ -6,7 +6,6 @@ var test = require('tape').test;
 var mbgl = require('../index.js');
 var fs = require('fs');
 var path = require('path');
-var child_process = require('child_process');
 var mkdirp = require('mkdirp');
 var http = require('http');
 var st = require('st');
@@ -15,7 +14,9 @@ var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'
 var server = http.createServer(st({path: suitePath}));
 
 function startFixtureServer(callback) {
-    server.listen(2900, callback);
+    server.listen(0, function(err) {
+        callback(err, err ? null : server.address().port);
+    });
 }
 
 function renderTest(style, info, dir) {
@@ -44,11 +45,11 @@ function renderTest(style, info, dir) {
     };
 }
 
-startFixtureServer(function(err) {
+startFixtureServer(function(err, port) {
     if (err) throw err;
 
     function rewriteLocalSchema(uri) {
-        return uri.replace(/^local:\/\//, 'http://127.0.0.1:2900/');
+        return uri.replace(/^local:\/\//, 'http://127.0.0.1:'+ port +'/');
     }
 
     var tests = fs.readdirSync(path.join(suitePath, 'tests')).filter(function(v) {
