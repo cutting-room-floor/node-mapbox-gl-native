@@ -27,9 +27,11 @@ void RenderWorker::Execute() {
     const unsigned int width = options_->width * options_->ratio;
     const unsigned int height = options_->height * options_->ratio;
 
+    void *rgba = map_->ReadPixels(width, height);
+
     image_ =  mbgl::util::compress_png(width,
                                        height,
-                                       map_->ReadPixels(width, height));
+                                       rgba);
 }
 
 void RenderWorker::HandleOKCallback() {
