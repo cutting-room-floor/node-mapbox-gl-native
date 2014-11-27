@@ -202,7 +202,7 @@ std::unique_ptr<unsigned int[]> Map::ReadPixels(const unsigned int width,
         memcpy(rgba + j * stride, tmp.get(), stride);
     }
 
-    return std::unique_ptr<unsigned int[]>(pixels.get());
+    return pixels;
 }
 
 } // ns node_mbgl
