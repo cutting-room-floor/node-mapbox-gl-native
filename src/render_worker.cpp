@@ -29,7 +29,7 @@ void RenderWorker::Execute() {
 
     image_ =  mbgl::util::compress_png(width,
                                        height,
-                                       map_->ReadPixels(width, height).get());
+                                       map_->ReadPixels().get());
 }
 
 void RenderWorker::HandleOKCallback() {

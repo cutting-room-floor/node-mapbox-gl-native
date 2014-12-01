@@ -188,21 +188,9 @@ void Map::Resize(const unsigned int width,
     map_->resize(width, height, ratio);
 }
 
-std::unique_ptr<unsigned int[]> Map::ReadPixels(const unsigned int width,
-                                                const unsigned int height)
+std::unique_ptr<uint32_t[]> Map::ReadPixels()
 {
-    std::unique_ptr<unsigned int[]> pixels = view_.readPixels();
-
-    const unsigned int stride = width * 4;
-    std::unique_ptr<unsigned int[]> tmp = std::unique_ptr<unsigned int[]>(new unsigned int[stride]());
-    unsigned int *rgba = pixels.get();
-    for (unsigned int i = 0, j = height - 1; i < j; i++, j--) {
-        memcpy(tmp.get(), rgba + i * stride, stride);
-        memcpy(rgba + i * stride, rgba + j * stride, stride);
-        memcpy(rgba + j * stride, tmp.get(), stride);
-    }
-
-    return pixels;
+    return view_.readPixels();
 }
 
 } // ns node_mbgl

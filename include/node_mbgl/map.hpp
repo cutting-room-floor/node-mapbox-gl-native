@@ -36,8 +36,7 @@ public:
                 const unsigned int height,
                 const float ratio);
 
-    std::unique_ptr<unsigned int[]> ReadPixels(const unsigned int width,
-                                               const unsigned int height);
+    std::unique_ptr<uint32_t[]> ReadPixels();
 
     inline map_ptr get() { return map_; }
 
