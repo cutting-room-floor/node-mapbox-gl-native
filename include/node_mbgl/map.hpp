@@ -6,6 +6,7 @@
 #include <mbgl/map/map.hpp>
 #include <mbgl/util/std.hpp>
 #include <mbgl/platform/default/headless_display.hpp>
+#include <mbgl/platform/default/caching_http_file_source.hpp>
 
 namespace node_mbgl
 {
@@ -57,6 +58,7 @@ private:
     static const RenderOptions* ParseOptions(v8::Local<v8::Object> obj);
 
     mbgl::HeadlessView view_;
+    mbgl::CachingHTTPFileSource fileSource_;
     map_ptr map_;
 
     double val_;
