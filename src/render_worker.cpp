@@ -9,7 +9,9 @@ RenderWorker::RenderWorker(Map* map,
                            NanCallback *callback)
     : NanAsyncWorker(callback),
     map_(map),
-    options_(options) {}
+    options_(options) {
+        map_->_ref();
+    }
 
 RenderWorker::~RenderWorker() {}
 
@@ -41,6 +43,8 @@ void RenderWorker::HandleOKCallback() {
     };
 
     callback->Call(2, argv);
+
+    map_->_unref();
 };
 
 } // ns node_mbgl

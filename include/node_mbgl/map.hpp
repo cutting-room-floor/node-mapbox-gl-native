@@ -46,6 +46,9 @@ public:
 
     inline double Val() const { return val_; }
 
+    inline void _ref() { Ref(); }
+    inline void _unref() { Unref(); }
+
 private:
     Map();
     ~Map();
