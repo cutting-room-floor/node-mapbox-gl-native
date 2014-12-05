@@ -6,7 +6,7 @@
 #include <mbgl/map/map.hpp>
 #include <mbgl/util/std.hpp>
 #include <mbgl/platform/default/headless_display.hpp>
-#include <mbgl/platform/default/caching_http_file_source.hpp>
+#include <mbgl/storage/caching_http_file_source.hpp>
 
 namespace node_mbgl
 {
