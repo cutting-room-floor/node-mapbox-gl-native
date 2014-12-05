@@ -24,6 +24,9 @@
               '-stdlib=libc++',
               '-Wno-unused-variable',
           ],
+          'OTHER_LDFLAGS': [
+              '-Wl, -bind_at_load'
+          ],
           'GCC_ENABLE_CPP_RTTI': 'YES',
           'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
       },
