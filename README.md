@@ -16,16 +16,7 @@ mbgl.render(info, function(err, image) {});
 
 ## Installing
 
-Not yet. See [building from source](#building-from-source).
-
-~~By default, installs binaries. On these platforms no external dependencies are needed.~~
-
-- 64 bit OS X or 64 bit Linux
-- Node v0.10.x
-
-~~Just run: `npm install`~~
-
-~~However, other platforms will fall back to a source compile: see [building from source](#building-from-source) for details.~~
+No binaries available yet. See [building from source](#building-from-source).
 
 ## Building from source
 
