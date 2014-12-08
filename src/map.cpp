@@ -29,7 +29,6 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
     NODE_SET_PROTOTYPE_METHOD(tpl, "set", Set);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "add", Add);
 
     NanAssignPersistent(constructor, tpl->GetFunction());
 
@@ -154,29 +153,6 @@ NAN_METHOD(Map::Render) {
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     NanAsyncQueueWorker(new RenderWorker(map, options, callback));
-
-    NanReturnUndefined();
-}
-
-NAN_METHOD(Map::Set) {
-    NanScope();
-
-    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-    map->val_ = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
-
-    NanReturnUndefined();
-}
-
-NAN_METHOD(Map::Add) {
-    NanScope();
-
-    NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
-
-    const double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
-
-    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-
-    NanAsyncQueueWorker(new AddWorker(map, value, callback));
 
     NanReturnUndefined();
 }

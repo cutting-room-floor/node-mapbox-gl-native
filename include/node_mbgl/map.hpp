@@ -41,11 +41,6 @@ public:
 
     inline map_ptr get() { return map_; }
 
-    static NAN_METHOD(Set);
-    static NAN_METHOD(Add);
-
-    inline double Val() const { return val_; }
-
     inline void _ref() { Ref(); }
     inline void _unref() { Unref(); }
 
@@ -63,8 +58,6 @@ private:
     mbgl::HeadlessView view_;
     mbgl::CachingHTTPFileSource fileSource_;
     map_ptr map_;
-
-    double val_;
 };
 
 } // ns node_mbgl
