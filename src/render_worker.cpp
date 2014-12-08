@@ -16,22 +16,26 @@ RenderWorker::RenderWorker(Map* map,
 RenderWorker::~RenderWorker() {}
 
 void RenderWorker::Execute() {
-    map_->get()->setAppliedClasses(options_->classes);
+    try {
+        map_->get()->setAppliedClasses(options_->classes);
 
-    map_->Resize(options_->width, options_->height, options_->ratio);
+        map_->Resize(options_->width, options_->height, options_->ratio);
 
-    map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
-    map_->get()->setBearing(options_->bearing);
+        map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
+        map_->get()->setBearing(options_->bearing);
 
-    // Run the loop. It will terminate when we don't have any further listeners.
-    map_->get()->run();
+        // Run the loop. It will terminate when we don't have any further listeners.
+        map_->get()->run();
 
-    const unsigned int width = options_->width * options_->ratio;
-    const unsigned int height = options_->height * options_->ratio;
+        const unsigned int width = options_->width * options_->ratio;
+        const unsigned int height = options_->height * options_->ratio;
 
-    image_ =  mbgl::util::compress_png(width,
-                                       height,
-                                       map_->ReadPixels().get());
+        image_ =  mbgl::util::compress_png(width,
+                                           height,
+                                           map_->ReadPixels().get());
+    } catch(const std::exception& ex) {
+        SetErrorMessage(ex.what());
+    }
 }
 
 void RenderWorker::HandleOKCallback() {
