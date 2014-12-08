@@ -1,16 +1,16 @@
 {
-  'targets': [
+  "targets": [
     {
-      'target_name': '<(module_name)',
-      'sources': [
-        'src/node_mbgl.cpp',
-        'src/render.cpp',
-        'src/render_worker.cpp',
+      "target_name": "<(module_name)",
+      "sources": [
+        "src/node_mbgl.cpp",
+        "src/map.cpp",
+        "src/render_worker.cpp",
       ],
-      'include_dirs': [
-        'include',
-        '<!(node -e \"require(\'nan\')\")',
-        '<!(mbgl-config --includedir)',
+      "include_dirs": [
+        "include",
+        "<!(node -e \"require('nan')\")",
+        "<!(mbgl-config --includedir)",
       ],
       'libraries': [
         '<!@(mbgl-config --libs)',
@@ -22,6 +22,9 @@
               '-std=c++11',
               '-stdlib=libc++',
               '-Wno-unused-variable',
+          ],
+          'OTHER_LDFLAGS': [
+              '-Wl, -bind_at_load'
           ],
           'GCC_ENABLE_CPP_RTTI': 'YES',
           'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'

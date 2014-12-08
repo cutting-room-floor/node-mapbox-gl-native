@@ -7,6 +7,8 @@
     "gl"
   ],
   "main": "index.js",
+  "private": true,
+  "gypfile": true,
   "repository": {
     "type": "git",
     "url": "git://github.com/mapbox/node-mapbox-gl-native.git"
@@ -18,15 +20,21 @@
     }
   ],
   "dependencies": {
-    "nan": "^1.3.0",
-    "node-pre-gyp": "^0.5.23"
+    "nan": "^1.4.1",
+    "node-pre-gyp": "^0.5.31"
   },
   "bundledDependencies": [
     "node-pre-gyp"
   ],
+  "devDependencies": {
+    "mapbox-gl-test-suite": "git://github.com/mapbox/mapbox-gl-test-suite",
+    "mkdirp": "^0.5.0",
+    "st": "^0.5.1",
+    "tape": "^3.0.3"
+  },
   "scripts": {
     "install": "node-pre-gyp install --fallback-to-build",
-    "test": "(./node_modules/.bin/tape test/**/*.test.js || true) && (cd ./node_modules/mapbox-gl-test-suite/ && (./bin/compare_images.py || true))"
+    "test": "./node_modules/.bin/tape test/**/*.test.js && (cd ./node_modules/mapbox-gl-test-suite/ && (./bin/compare_images.py || true))"
   },
   "binary": {
     "module_name": "mapbox-gl-native",
@@ -34,11 +42,5 @@
     "host": "https://mapbox-node-binary.s3.amazonaws.com",
     "remote_path": "./{name}/v{version}",
     "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
-  },
-  "devDependencies": {
-    "mapbox-gl-test-suite": "mapbox/mapbox-gl-test-suite",
-    "mkdirp": "^0.5.0",
-    "st": "^0.5.1",
-    "tape": "^2.14.0"
   }
 }
