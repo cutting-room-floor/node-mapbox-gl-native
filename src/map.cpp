@@ -27,7 +27,6 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     // Prototype
     NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "set", Set);
 
     NanAssignPersistent(constructor, tpl->GetFunction());
 
