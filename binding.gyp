@@ -5,7 +5,6 @@
       "sources": [
         "src/node_mbgl.cpp",
         "src/map.cpp",
-        "src/add_worker.cpp",
         "src/render_worker.cpp",
       ],
       "include_dirs": [
