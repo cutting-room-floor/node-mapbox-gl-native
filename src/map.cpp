@@ -148,6 +148,8 @@ NAN_METHOD(Map::Render) {
 
     const RenderOptions* options(ParseOptions(args[0]->ToObject()));
 
+    fileSource_->setAccessToken(options_->accessToken);
+
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     NanAsyncQueueWorker(new RenderWorker(map, options, callback));
