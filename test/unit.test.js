@@ -73,3 +73,11 @@ test('empty', function(t) {
         t.end();
     });
 });
+
+test('terminate', function(t) {
+    var map = new mbgl.Map();
+    t.doesNotThrow(function() {
+        map.terminate();
+    }, 'does not throw error');
+    t.end();
+});
