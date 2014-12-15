@@ -10,13 +10,15 @@ RenderWorker::RenderWorker(Map* map,
     : NanAsyncWorker(callback),
     map_(map),
     options_(options) {
-        map_->_ref();
+        map_->_Ref();
     }
 
 RenderWorker::~RenderWorker() {}
 
 void RenderWorker::Execute() {
     try {
+        map_->GetFileSource()->setAccessToken(options_->accessToken);
+
         map_->get()->setAppliedClasses(options_->classes);
 
         map_->Resize(options_->width, options_->height, options_->ratio);
@@ -48,7 +50,7 @@ void RenderWorker::HandleOKCallback() {
 
     callback->Call(2, argv);
 
-    map_->_unref();
+    map_->_Unref();
 };
 
 } // ns node_mbgl

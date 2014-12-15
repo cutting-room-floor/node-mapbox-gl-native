@@ -23,7 +23,8 @@ struct RenderOptions {
     std::vector<std::string> classes;
 };
 
-typedef std::shared_ptr<mbgl::Map> map_ptr;
+typedef std::shared_ptr<mbgl::Map> mapPtr;
+typedef std::shared_ptr<mbgl::CachingHTTPFileSource> fileSourcePtr;
 
 class Map : public node::ObjectWrap
 {
@@ -39,10 +40,11 @@ public:
 
     std::unique_ptr<uint32_t[]> ReadPixels();
 
-    inline map_ptr get() { return map_; }
+    inline mapPtr get() { return map_; }
+    inline fileSourcePtr GetFileSource() { return fileSource_; }
 
-    inline void _ref() { Ref(); }
-    inline void _unref() { Unref(); }
+    inline void _Ref() { Ref(); }
+    inline void _Unref() { Unref(); }
 
 private:
     Map();
@@ -52,12 +54,12 @@ private:
     static NAN_METHOD(New);
     static NAN_METHOD(NewInstance);
 
-    static const std::string StringifyStyle(v8::Handle<v8::Value> style_handle);
+    static const std::string StringifyStyle(v8::Handle<v8::Value> styleHandle);
     static const RenderOptions* ParseOptions(v8::Local<v8::Object> obj);
 
     mbgl::HeadlessView view_;
-    mbgl::CachingHTTPFileSource fileSource_;
-    map_ptr map_;
+    fileSourcePtr fileSource_;
+    mapPtr map_;
 };
 
 } // ns node_mbgl

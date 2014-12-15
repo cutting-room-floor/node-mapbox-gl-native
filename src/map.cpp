@@ -8,8 +8,8 @@ namespace node_mbgl
 
 Map::Map()
     : view_(display_),
-    fileSource_(""), // Pass empty string to disable the cache
-    map_(std::make_shared<mbgl::Map>(view_, fileSource_)) {};
+    fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>("")), // Pass empty string to disable the cache
+    map_(std::make_shared<mbgl::Map>(view_, *fileSource_)) {};
 
 Map::~Map() {};
 
@@ -60,13 +60,13 @@ NAN_METHOD(Map::NewInstance) {
     NanReturnValue(instance);
 }
 
-const std::string Map::StringifyStyle(v8::Handle<v8::Value> style_handle) {
+const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
     NanScope();
 
     v8::Handle<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
     v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
 
-    return *NanUtf8String(stringify->Call(JSON, 1, &style_handle));
+    return *NanUtf8String(stringify->Call(JSON, 1, &styleHandle));
 }
 
 const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
