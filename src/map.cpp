@@ -3,15 +3,15 @@
 #include <node_mbgl/display.hpp>
 #include <node_mbgl/render_worker.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
 Map::Map()
     : view_(display_),
-    fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>("")), // Pass empty string to disable the cache
-    map_(std::make_shared<mbgl::Map>(view_, *fileSource_)) {};
+      fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>(
+          "")), // Pass empty string to disable the cache
+      map_(std::make_shared<mbgl::Map>(view_, *fileSource_)){};
 
-Map::~Map() {};
+Map::~Map(){};
 
 v8::Persistent<v8::Function> Map::constructor;
 
@@ -19,8 +19,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     NanScope();
 
     // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl =
-        NanNew<v8::FunctionTemplate>(New);
+    v8::Local<v8::FunctionTemplate> tpl = NanNew<v8::FunctionTemplate>(New);
     tpl->SetClassName(NanNew("Map"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -31,14 +30,13 @@ void Map::Init(v8::Handle<v8::Object> exports) {
 
     NanAssignPersistent(constructor, tpl->GetFunction());
 
-    exports->Set(NanNew("Map"),
-        NanNew<v8::FunctionTemplate>(NewInstance)->GetFunction());
+    exports->Set(NanNew("Map"), NanNew<v8::FunctionTemplate>(NewInstance)->GetFunction());
 }
 
 NAN_METHOD(Map::New) {
     NanScope();
 
-    Map* map = new Map();
+    Map *map = new Map();
     map->Wrap(args.Holder());
 
     NanReturnHolder();
@@ -47,8 +45,7 @@ NAN_METHOD(Map::New) {
 NAN_METHOD(Map::NewInstance) {
     NanScope();
 
-    if (!args.IsConstructCall())
-    {
+    if (!args.IsConstructCall()) {
         NanThrowError("Cannot call constructor as function, you need to use 'new' keyword");
         NanReturnUndefined();
     }
@@ -70,15 +67,19 @@ const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
     return *NanUtf8String(stringify->Call(JSON, 1, &styleHandle));
 }
 
-const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
+const RenderOptions *Map::ParseOptions(v8::Local<v8::Object> obj) {
     NanScope();
 
-    RenderOptions* options = new RenderOptions();
+    RenderOptions *options = new RenderOptions();
 
     options->zoom = obj->Has(NanNew("zoom")) ? obj->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = obj->Has(NanNew("bearing")) ? obj->Get(NanNew("bearing"))->NumberValue() : 0;
-    options->latitude = obj->Has(NanNew("center")) ? obj->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue() : 0;
-    options->longitude = obj->Has(NanNew("center")) ? obj->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue() : 0;
+    options->latitude = obj->Has(NanNew("center"))
+                            ? obj->Get(NanNew("center")).As<v8::Array>()->Get(0)->NumberValue()
+                            : 0;
+    options->longitude = obj->Has(NanNew("center"))
+                             ? obj->Get(NanNew("center")).As<v8::Array>()->Get(1)->NumberValue()
+                             : 0;
     options->width = obj->Has(NanNew("width")) ? obj->Get(NanNew("width"))->IntegerValue() : 512;
     options->height = obj->Has(NanNew("height")) ? obj->Get(NanNew("height"))->IntegerValue() : 512;
     options->ratio = obj->Has(NanNew("ratio")) ? obj->Get(NanNew("ratio"))->IntegerValue() : 1;
@@ -101,8 +102,7 @@ const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
 NAN_METHOD(Map::Load) {
     NanScope();
 
-    if (args.Length() != 1)
-    {
+    if (args.Length() != 1) {
         NanThrowError("Wrong number of arguments");
         NanReturnUndefined();
     }
@@ -120,7 +120,7 @@ NAN_METHOD(Map::Load) {
         NanReturnUndefined();
     }
 
-    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
+    Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
     map->get()->setStyleJSON(style, ".");
 
     NanReturnUndefined();
@@ -129,29 +129,26 @@ NAN_METHOD(Map::Load) {
 NAN_METHOD(Map::Render) {
     NanScope();
 
-    if (args.Length() != 2)
-    {
+    if (args.Length() != 2) {
         NanThrowError("Wrong number of arguments");
         NanReturnUndefined();
     }
 
-    if (!args[1]->IsFunction())
-    {
+    if (!args[1]->IsFunction()) {
         NanThrowTypeError("Callback must be a function");
         NanReturnUndefined();
     }
 
     NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
 
-    if (!args[0]->IsObject())
-    {
+    if (!args[0]->IsObject()) {
         NanThrowTypeError("First argument must be an options object");
         NanReturnUndefined();
     }
 
-    const RenderOptions* options(ParseOptions(args[0]->ToObject()));
+    const RenderOptions *options(ParseOptions(args[0]->ToObject()));
 
-    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
+    Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     NanAsyncQueueWorker(new RenderWorker(map, options, callback));
 
@@ -167,17 +164,11 @@ NAN_METHOD(Map::Terminate) {
     NanReturnUndefined();
 }
 
-void Map::Resize(const unsigned int width,
-                 const unsigned int height,
-                 const float ratio)
-{
+void Map::Resize(const unsigned int width, const unsigned int height, const float ratio) {
     view_.resize(width, height, ratio);
     map_->resize(width, height, ratio);
 }
 
-std::unique_ptr<uint32_t[]> Map::ReadPixels()
-{
-    return view_.readPixels();
-}
+std::unique_ptr<uint32_t[]> Map::ReadPixels() { return view_.readPixels(); }
 
 } // ns node_mbgl
