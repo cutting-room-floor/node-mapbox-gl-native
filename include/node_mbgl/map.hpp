@@ -31,7 +31,7 @@ class Map : public node::ObjectWrap
 
 public:
     static void Init(v8::Handle<v8::Object> exports);
-    static NAN_METHOD(Load);
+    static NAN_METHOD(SetStyleJSON);
     static NAN_METHOD(Render);
     static NAN_METHOD(Terminate);
 
