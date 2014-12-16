@@ -24,7 +24,7 @@ function renderTest(style, info, dir) {
         t.plan = remaining * 3;
         var start = +new Date;
         var map = new mbgl.Map();
-        map.load(style);
+        map.setStyleJSON(style);
         for (var i = 0; i < remaining; i++) {
             map.render(info, function(err, image) {
                 t.error(err);
@@ -55,6 +55,8 @@ startFixtureServer(function(err, port) {
 
     if (style.sprite) style.sprite = rewriteLocalSchema(style.sprite);
     if (style.glyphs) style.glyphs = rewriteLocalSchema(style.glyphs);
+
+    style = JSON.stringify(style);
 
     for (var key in info) {
         test(dir + ' ' + k, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));

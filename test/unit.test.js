@@ -8,7 +8,7 @@ var mbgl = require('../index.js');
 test('missing load arguments', function(t) {
     var map = new mbgl.Map();
     t.throws(function() {
-        map.load();
+        map.setStyleJSON();
     }, /Wrong number of arguments/, 'throws error');
     t.end();
 });
@@ -16,16 +16,16 @@ test('missing load arguments', function(t) {
 test('bad style', function(t) {
     var map = new mbgl.Map();
     t.throws(function() {
-        map.load(null);
-    }, /First argument must be a style object/, 'throws error');
+        map.setStyleJSON(null);
+    }, /Expect either an object or array at root/, 'throws error');
     t.end();
 });
 
 test('good load args', function(t) {
     var map = new mbgl.Map();
-    t.doesNotThrow(function() {
-        map.load({});
-    }, 'does not throw error');
+    t.throws(function() {
+        map.setStyleJSON({});
+    }, 'Expect a value here', 'throws error');
     t.end();
 });
 
@@ -56,7 +56,7 @@ test('bad render callback', function(t) {
 test('good render args', function(t) {
     var map = new mbgl.Map();
     // map.render will segfault if called before map.load
-    map.load({});
+    map.setStyleJSON('{}');
     t.doesNotThrow(function() {
         map.render({}, function() {});
     }, 'does not throw error');
@@ -65,7 +65,7 @@ test('good render args', function(t) {
 
 test('empty', function(t) {
     var map = new mbgl.Map();
-    map.load({});
+    map.setStyleJSON('{}');
     map.render({}, function(err, image) {
         t.error(err);
         t.equal(image.length, 4668);

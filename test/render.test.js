@@ -31,7 +31,7 @@ function renderTest(style, info, dir) {
         });
 
         var map = new mbgl.Map();
-        map.load(style);
+        map.setStyleJSON(style);
         map.render(info, function(err, image) {
             t.error(err);
             mkdirp.sync(dir);
@@ -65,6 +65,8 @@ startFixtureServer(function(err, port) {
 
         if (style.sprite) style.sprite = rewriteLocalSchema(style.sprite);
         if (style.glyphs) style.glyphs = rewriteLocalSchema(style.glyphs);
+
+        style = JSON.stringify(style);
 
         for (var key in info) {
             test(dir + ' ' + k, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));

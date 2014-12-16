@@ -102,7 +102,12 @@ NAN_METHOD(Map::SetStyleJSON) {
     toStr->WriteUtf8(const_cast<char *>(style.data()));
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-    map->get()->setStyleJSON(style, ".");
+
+    try {
+        map->get()->setStyleJSON(style, ".");
+    } catch (const std::exception &e) {
+        NanThrowError(e.what());
+    }
 
     NanReturnUndefined();
 }
