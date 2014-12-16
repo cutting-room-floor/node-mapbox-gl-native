@@ -3,12 +3,15 @@
 
 namespace node_mbgl {
 
-RenderWorker::RenderWorker(Map *map, const RenderOptions *options, NanCallback *callback)
-    : NanAsyncWorker(callback), map_(map), options_(options) {
+RenderWorker::RenderWorker(Map *map, std::unique_ptr<RenderOptions> &&options,
+                           NanCallback *callback)
+    : NanAsyncWorker(callback), map_(map), options_(std::move(options)) {
     map_->_Ref();
 }
 
-RenderWorker::~RenderWorker() {}
+RenderWorker::~RenderWorker() {
+    map_->_Unref();
+}
 
 void RenderWorker::Execute() {
     try {
@@ -34,14 +37,19 @@ void RenderWorker::Execute() {
     }
 }
 
+void RenderWorker::WorkComplete() {
+    NanAsyncWorker::WorkComplete();
+
+    // Continue processing remaining items in the queue.
+    map_->ProcessNext();
+}
+
 void RenderWorker::HandleOKCallback() {
     NanScope();
 
     v8::Local<v8::Value> argv[] = {NanNull(), NanNewBufferHandle(image_.c_str(), image_.length())};
 
     callback->Call(2, argv);
-
-    map_->_Unref();
 };
 
 } // ns node_mbgl
