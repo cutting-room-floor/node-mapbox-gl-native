@@ -3,8 +3,7 @@
 #include <node_mbgl/display.hpp>
 #include <node_mbgl/map.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
 std::shared_ptr<mbgl::HeadlessDisplay> display_;
 

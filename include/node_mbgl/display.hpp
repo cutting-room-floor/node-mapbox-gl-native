@@ -3,8 +3,7 @@
 
 #include <mbgl/platform/default/headless_display.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
 extern std::shared_ptr<mbgl::HeadlessDisplay> display_;
 
