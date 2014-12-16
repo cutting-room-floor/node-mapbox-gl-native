@@ -66,10 +66,10 @@ const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
     return *NanUtf8String(stringify->Call(JSON, 1, &styleHandle));
 }
 
-const RenderOptions *Map::ParseOptions(v8::Local<v8::Object> obj) {
+std::unique_ptr<RenderOptions> Map::ParseOptions(v8::Local<v8::Object> obj) {
     NanScope();
 
-    RenderOptions *options = new RenderOptions();
+    auto options = std::unique_ptr<RenderOptions>(new RenderOptions());
 
     options->zoom = obj->Has(NanNew("zoom")) ? obj->Get(NanNew("zoom"))->NumberValue() : 0;
     options->bearing = obj->Has(NanNew("bearing")) ? obj->Get(NanNew("bearing"))->NumberValue() : 0;
@@ -120,7 +120,12 @@ NAN_METHOD(Map::Load) {
     }
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-    map->get()->setStyleJSON(style, ".");
+
+    try {
+        map->get()->setStyleJSON(style, ".");
+    } catch (const std::exception &ex) {
+        NanThrowError(ex.what());
+    }
 
     NanReturnUndefined();
 }
@@ -145,11 +150,16 @@ NAN_METHOD(Map::Render) {
         NanReturnUndefined();
     }
 
-    const RenderOptions *options(ParseOptions(args[0]->ToObject()));
+    auto options = ParseOptions(args[0]->ToObject());
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
-    NanAsyncQueueWorker(new RenderWorker(map, options, callback));
+    const bool empty = map->queue_.empty();
+    map->queue_.push(new RenderWorker(map, std::move(options), callback));
+    if (empty) {
+        // When the queue was empty, there was no action in progress, so we can start a new one.
+        NanAsyncQueueWorker(map->queue_.front());
+    }
 
     NanReturnUndefined();
 }
@@ -161,6 +171,15 @@ NAN_METHOD(Map::Terminate) {
     map->get()->terminate();
 
     NanReturnUndefined();
+}
+
+void Map::ProcessNext() {
+    assert(!queue_.empty());
+    queue_.pop();
+    if (!queue_.empty()) {
+        // When the queue was empty, there was no action in progress, so we can start a new one.
+        NanAsyncQueueWorker(queue_.front());
+    }
 }
 
 void Map::Resize(const unsigned int width, const unsigned int height, const float ratio) {

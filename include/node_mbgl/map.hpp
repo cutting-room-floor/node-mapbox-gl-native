@@ -8,7 +8,11 @@
 #include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/storage/caching_http_file_source.hpp>
 
+#include <queue>
+
 namespace node_mbgl {
+
+class RenderWorker;
 
 struct RenderOptions {
     double zoom;
@@ -39,6 +43,7 @@ public:
 
     inline mapPtr get() { return map_; }
     inline fileSourcePtr GetFileSource() { return fileSource_; }
+    void ProcessNext();
 
     inline void _Ref() { Ref(); }
     inline void _Unref() { Unref(); }
@@ -52,11 +57,13 @@ private:
     static NAN_METHOD(NewInstance);
 
     static const std::string StringifyStyle(v8::Handle<v8::Value> styleHandle);
-    static const RenderOptions *ParseOptions(v8::Local<v8::Object> obj);
+    static std::unique_ptr<RenderOptions> ParseOptions(v8::Local<v8::Object> obj);
 
     mbgl::HeadlessView view_;
     fileSourcePtr fileSource_;
     mapPtr map_;
+
+    std::queue<RenderWorker *> queue_;
 };
 
 } // ns node_mbgl
