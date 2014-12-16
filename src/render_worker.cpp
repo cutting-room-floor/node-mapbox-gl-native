@@ -32,9 +32,8 @@ void RenderWorker::Execute() {
         const unsigned int width = options_->width * options_->ratio;
         const unsigned int height = options_->height * options_->ratio;
 
-        image_ =  mbgl::util::compress_png(width,
-                                           height,
-                                           map_->ReadPixels().get());
+        const auto pixels = map_->ReadPixels();
+        image_ = mbgl::util::compress_png(width, height, pixels.get());
     } catch(const std::exception& ex) {
         SetErrorMessage(ex.what());
     }
