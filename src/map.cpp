@@ -7,8 +7,7 @@ namespace node_mbgl {
 
 Map::Map()
     : view_(display_),
-      fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>(
-          "")), // Pass empty string to disable the cache
+      fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>(":memory:")),
       map_(std::make_shared<mbgl::Map>(view_, *fileSource_)){};
 
 Map::~Map(){};
