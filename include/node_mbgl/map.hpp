@@ -33,6 +33,7 @@ public:
     static void Init(v8::Handle<v8::Object> exports);
     static NAN_METHOD(Load);
     static NAN_METHOD(Render);
+    static NAN_METHOD(Terminate);
 
     void Resize(const unsigned int width,
                 const unsigned int height,

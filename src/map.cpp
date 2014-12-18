@@ -27,6 +27,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     // Prototype
     NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "terminate", Terminate);
 
     NanAssignPersistent(constructor, tpl->GetFunction());
 
@@ -151,6 +152,15 @@ NAN_METHOD(Map::Render) {
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     NanAsyncQueueWorker(new RenderWorker(map, options, callback));
+
+    NanReturnUndefined();
+}
+
+NAN_METHOD(Map::Terminate) {
+    NanScope();
+
+    Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
+    map->get()->terminate();
 
     NanReturnUndefined();
 }
