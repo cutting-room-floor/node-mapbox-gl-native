@@ -8,7 +8,7 @@ namespace node_mbgl {
 
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(Map *map, std::unique_ptr<RenderOptions> &&options, NanCallback *callback);
+    RenderWorker(Map *map, std::unique_ptr<RenderOptions> options, NanCallback *callback);
     ~RenderWorker();
 
     void Execute();

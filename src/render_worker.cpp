@@ -3,7 +3,7 @@
 
 namespace node_mbgl {
 
-RenderWorker::RenderWorker(Map *map, std::unique_ptr<RenderOptions> &&options,
+RenderWorker::RenderWorker(Map *map, std::unique_ptr<RenderOptions> options,
                            NanCallback *callback)
     : NanAsyncWorker(callback), map_(map), options_(std::move(options)) {
     map_->_Ref();
