@@ -17,11 +17,19 @@ test('bad style', function(t) {
     var map = new mbgl.Map();
     t.throws(function() {
         map.load(null);
-    }, /First argument must be a style object/, 'throws error');
+    }, /First argument must be a style string or object/, 'throws error');
     t.end();
 });
 
-test('good load args', function(t) {
+test('load style string', function(t) {
+    var map = new mbgl.Map();
+    t.doesNotThrow(function() {
+        map.load('{}');
+    }, 'does not throw error');
+    t.end();
+});
+
+test('load style object', function(t) {
     var map = new mbgl.Map();
     t.doesNotThrow(function() {
         map.load({});

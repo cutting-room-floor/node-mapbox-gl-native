@@ -107,19 +107,21 @@ NAN_METHOD(Map::Load) {
         NanReturnUndefined();
     }
 
-    if (!args[0]->IsObject())
-    {
-        NanThrowTypeError("First argument must be a style object");
+    std::string style;
+
+    if (args[0]->IsObject()) {
+        style = StringifyStyle(args[0]);
+    } else if (args[0]->IsString()) {
+        v8::Local<v8::String> toStr = args[0]->ToString();
+        style.resize(toStr->Utf8Length());
+        toStr->WriteUtf8(const_cast<char *>(style.data()));
+    } else {
+        NanThrowTypeError("First argument must be a style string or object");
         NanReturnUndefined();
     }
-    
-    const std::string style(StringifyStyle(args[0]));
-    
+
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-
-    const std::string base_directory("/");
-
-    map->get()->setStyleJSON(style, base_directory);
+    map->get()->setStyleJSON(style, ".");
 
     NanReturnUndefined();
 }
