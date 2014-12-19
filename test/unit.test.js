@@ -56,7 +56,7 @@ test('bad render options', function(t) {
 test('bad render callback', function(t) {
     var map = new mbgl.Map();
     t.throws(function() {
-        map.render(null, null);
+        map.render({}, null);
     }, /Callback must be a function/, 'throws error');
     t.end();
 });

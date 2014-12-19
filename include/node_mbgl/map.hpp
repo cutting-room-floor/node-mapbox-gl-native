@@ -26,42 +26,26 @@ struct RenderOptions {
     std::vector<std::string> classes;
 };
 
-typedef std::shared_ptr<mbgl::Map> mapPtr;
-typedef std::shared_ptr<mbgl::CachingHTTPFileSource> fileSourcePtr;
-
 class Map : public node::ObjectWrap {
-
 public:
+    friend RenderWorker;
+
+    Map();
+
     static void Init(v8::Handle<v8::Object> exports);
+    static v8::Persistent<v8::Function> constructor;
+    static NAN_METHOD(New);
+    static NAN_METHOD(NewInstance);
     static NAN_METHOD(Load);
     static NAN_METHOD(Render);
     static NAN_METHOD(Terminate);
 
-    void Resize(const unsigned int width, const unsigned int height, const float ratio);
-
-    std::unique_ptr<uint32_t[]> ReadPixels();
-
-    inline mapPtr get() { return map_; }
-    inline fileSourcePtr GetFileSource() { return fileSource_; }
     void ProcessNext();
 
-    inline void _Ref() { Ref(); }
-    inline void _Unref() { Unref(); }
-
 private:
-    Map();
-    ~Map();
-
-    static v8::Persistent<v8::Function> constructor;
-    static NAN_METHOD(New);
-    static NAN_METHOD(NewInstance);
-
-    static const std::string StringifyStyle(v8::Handle<v8::Value> styleHandle);
-    static std::unique_ptr<RenderOptions> ParseOptions(v8::Local<v8::Object> obj);
-
     mbgl::HeadlessView view_;
-    fileSourcePtr fileSource_;
-    mapPtr map_;
+    mbgl::CachingHTTPFileSource fileSource_;
+    mbgl::Map map_;
 
     std::queue<std::unique_ptr<RenderWorker>> queue_;
 };
