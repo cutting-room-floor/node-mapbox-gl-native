@@ -4,22 +4,19 @@
 #include <nan.h>
 #include <node_mbgl/map.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(Map* map,
-                 const RenderOptions* options,
-                 NanCallback *callback);
+    RenderWorker(Map *map, const RenderOptions *options, NanCallback *callback);
     ~RenderWorker();
 
     void Execute();
     void HandleOKCallback();
 
 private:
-    Map* map_;
-    const RenderOptions* options_;
+    Map *map_;
+    const RenderOptions *options_;
     std::string image_;
 };
 

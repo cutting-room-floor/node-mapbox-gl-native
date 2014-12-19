@@ -1,17 +1,12 @@
 #include <node_mbgl/render_worker.hpp>
 #include <mbgl/util/image.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
-RenderWorker::RenderWorker(Map* map,
-                           const RenderOptions* options,
-                           NanCallback *callback)
-    : NanAsyncWorker(callback),
-    map_(map),
-    options_(options) {
-        map_->_Ref();
-    }
+RenderWorker::RenderWorker(Map *map, const RenderOptions *options, NanCallback *callback)
+    : NanAsyncWorker(callback), map_(map), options_(options) {
+    map_->_Ref();
+}
 
 RenderWorker::~RenderWorker() {}
 
@@ -34,7 +29,7 @@ void RenderWorker::Execute() {
 
         const auto pixels = map_->ReadPixels();
         image_ = mbgl::util::compress_png(width, height, pixels.get());
-    } catch(const std::exception& ex) {
+    } catch (const std::exception &ex) {
         SetErrorMessage(ex.what());
     }
 }
@@ -42,10 +37,7 @@ void RenderWorker::Execute() {
 void RenderWorker::HandleOKCallback() {
     NanScope();
 
-    v8::Local<v8::Value> argv[] = {
-        NanNull(),
-        NanNewBufferHandle(image_.c_str(), image_.length())
-    };
+    v8::Local<v8::Value> argv[] = {NanNull(), NanNewBufferHandle(image_.c_str(), image_.length())};
 
     callback->Call(2, argv);
 

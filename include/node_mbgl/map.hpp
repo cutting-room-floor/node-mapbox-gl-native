@@ -8,8 +8,7 @@
 #include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/storage/caching_http_file_source.hpp>
 
-namespace node_mbgl
-{
+namespace node_mbgl {
 
 struct RenderOptions {
     double zoom;
@@ -26,8 +25,7 @@ struct RenderOptions {
 typedef std::shared_ptr<mbgl::Map> mapPtr;
 typedef std::shared_ptr<mbgl::CachingHTTPFileSource> fileSourcePtr;
 
-class Map : public node::ObjectWrap
-{
+class Map : public node::ObjectWrap {
 
 public:
     static void Init(v8::Handle<v8::Object> exports);
@@ -35,9 +33,7 @@ public:
     static NAN_METHOD(Render);
     static NAN_METHOD(Terminate);
 
-    void Resize(const unsigned int width,
-                const unsigned int height,
-                const float ratio);
+    void Resize(const unsigned int width, const unsigned int height, const float ratio);
 
     std::unique_ptr<uint32_t[]> ReadPixels();
 
@@ -56,7 +52,7 @@ private:
     static NAN_METHOD(NewInstance);
 
     static const std::string StringifyStyle(v8::Handle<v8::Value> styleHandle);
-    static const RenderOptions* ParseOptions(v8::Local<v8::Object> obj);
+    static const RenderOptions *ParseOptions(v8::Local<v8::Object> obj);
 
     mbgl::HeadlessView view_;
     fileSourcePtr fileSource_;
