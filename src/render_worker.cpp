@@ -9,9 +9,7 @@ RenderWorker::RenderWorker(Map *map, std::unique_ptr<RenderOptions> &&options,
     map_->_Ref();
 }
 
-RenderWorker::~RenderWorker() {
-    map_->_Unref();
-}
+RenderWorker::~RenderWorker() {}
 
 void RenderWorker::Execute() {
     try {
@@ -50,6 +48,8 @@ void RenderWorker::HandleOKCallback() {
     v8::Local<v8::Value> argv[] = {NanNull(), NanNewBufferHandle(image_.c_str(), image_.length())};
 
     callback->Call(2, argv);
+
+    map_->_Unref();
 };
 
 } // ns node_mbgl
