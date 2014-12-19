@@ -25,7 +25,7 @@ void Map::Init(v8::Handle<v8::Object> exports) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
     // Prototype
-    NODE_SET_PROTOTYPE_METHOD(tpl, "setStyleJSON", SetStyleJSON);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(tpl, "render", Render);
     NODE_SET_PROTOTYPE_METHOD(tpl, "terminate", Terminate);
 
@@ -61,6 +61,14 @@ NAN_METHOD(Map::NewInstance) {
     NanReturnValue(instance);
 }
 
+const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
+    NanScope();
+
+    v8::Handle<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
+    v8::Handle<v8::Function> stringify = v8::Handle<v8::Function>::Cast(JSON->Get(NanNew("stringify")));
+
+    return *NanUtf8String(stringify->Call(JSON, 1, &styleHandle));
+}
 
 const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
     NanScope();
@@ -90,7 +98,7 @@ const RenderOptions* Map::ParseOptions(v8::Local<v8::Object> obj) {
     return options;
 }
 
-NAN_METHOD(Map::SetStyleJSON) {
+NAN_METHOD(Map::Load) {
     NanScope();
 
     if (args.Length() != 1)
@@ -99,10 +107,18 @@ NAN_METHOD(Map::SetStyleJSON) {
         NanReturnUndefined();
     }
 
-    v8::Local<v8::String> toStr = args[0]->ToString();
     std::string style;
-    style.resize(toStr->Utf8Length());
-    toStr->WriteUtf8(const_cast<char *>(style.data()));
+
+    if (args[0]->IsObject()) {
+        style = StringifyStyle(args[0]);
+    } else if (args[0]->IsString()) {
+        v8::Local<v8::String> toStr = args[0]->ToString();
+        style.resize(toStr->Utf8Length());
+        toStr->WriteUtf8(const_cast<char *>(style.data()));
+    } else {
+        NanThrowTypeError("First argument must be a style string or object");
+        NanReturnUndefined();
+    }
 
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
     map->get()->setStyleJSON(style, ".");
