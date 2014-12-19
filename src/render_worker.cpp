@@ -6,32 +6,28 @@ namespace node_mbgl {
 RenderWorker::RenderWorker(Map *map, std::unique_ptr<RenderOptions> options,
                            NanCallback *callback)
     : NanAsyncWorker(callback), map_(map), options_(std::move(options)) {
-    map_->_Ref();
+    map_->Ref();
 }
 
 RenderWorker::~RenderWorker() {
-    map_->_Unref();
+    map_->Unref();
 }
 
 void RenderWorker::Execute() {
     try {
-        map_->GetFileSource()->setAccessToken(options_->accessToken);
-
-        map_->get()->setAppliedClasses(options_->classes);
-
-        map_->Resize(options_->width, options_->height, options_->ratio);
-
-        map_->get()->setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
-        map_->get()->setBearing(options_->bearing);
+        map_->fileSource_.setAccessToken(options_->accessToken);
+        map_->view_.resize(options_->width, options_->height, options_->ratio);
+        map_->map_.resize(options_->width, options_->height, options_->ratio);
+        map_->map_.setAppliedClasses(options_->classes);
+        map_->map_.setLonLatZoom(options_->longitude, options_->latitude, options_->zoom);
+        map_->map_.setBearing(options_->bearing);
 
         // Run the loop. It will terminate when we don't have any further listeners.
-        map_->get()->run();
+        map_->map_.run();
 
         const unsigned int width = options_->width * options_->ratio;
         const unsigned int height = options_->height * options_->ratio;
-
-        const auto pixels = map_->ReadPixels();
-        image_ = mbgl::util::compress_png(width, height, pixels.get());
+        image_ = mbgl::util::compress_png(width, height, map_->view_.readPixels().get());
     } catch (const std::exception &ex) {
         SetErrorMessage(ex.what());
     }

@@ -6,14 +6,13 @@
 
 namespace node_mbgl {
 
+v8::Persistent<v8::Function> Map::constructor;
+
 Map::Map()
     : view_(display_),
-      fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>("")),
-      map_(std::make_shared<mbgl::Map>(view_, *fileSource_)){};
-
-Map::~Map(){};
-
-v8::Persistent<v8::Function> Map::constructor;
+      fileSource_(""),
+      map_(view_, fileSource_) {
+}
 
 void Map::Init(v8::Handle<v8::Object> exports) {
     NanScope();
@@ -46,8 +45,7 @@ NAN_METHOD(Map::NewInstance) {
     NanScope();
 
     if (!args.IsConstructCall()) {
-        NanThrowError("Cannot call constructor as function, you need to use 'new' keyword");
-        NanReturnUndefined();
+        return NanThrowError("Cannot call constructor as function, you need to use 'new' keyword");
     }
 
     const unsigned argc = 0;
@@ -58,7 +56,7 @@ NAN_METHOD(Map::NewInstance) {
     NanReturnValue(instance);
 }
 
-const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
+const std::string StringifyStyle(v8::Handle<v8::Value> styleHandle) {
     NanScope();
 
     v8::Handle<v8::Object> JSON = NanGetCurrentContext()->Global()->Get(NanNew("JSON"))->ToObject();
@@ -67,7 +65,7 @@ const std::string Map::StringifyStyle(v8::Handle<v8::Value> styleHandle) {
     return *NanUtf8String(stringify->Call(JSON, 1, &styleHandle));
 }
 
-std::unique_ptr<RenderOptions> Map::ParseOptions(v8::Local<v8::Object> obj) {
+std::unique_ptr<RenderOptions> ParseOptions(v8::Local<v8::Object> obj) {
     NanScope();
 
     auto options = std::unique_ptr<RenderOptions>(new RenderOptions());
@@ -103,8 +101,7 @@ NAN_METHOD(Map::Load) {
     NanScope();
 
     if (args.Length() != 1) {
-        NanThrowError("Wrong number of arguments");
-        NanReturnUndefined();
+        return NanThrowError("Wrong number of arguments");
     }
 
     std::string style;
@@ -116,14 +113,13 @@ NAN_METHOD(Map::Load) {
         style.resize(toStr->Utf8Length());
         toStr->WriteUtf8(const_cast<char *>(style.data()));
     } else {
-        NanThrowTypeError("First argument must be a style string or object");
-        NanReturnUndefined();
+        return NanThrowTypeError("First argument must be a style string or object");
     }
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     try {
-        map->get()->setStyleJSON(style, ".");
+        map->map_.setStyleJSON(style, ".");
     } catch (const std::exception &ex) {
         NanThrowError(ex.what());
     }
@@ -135,28 +131,26 @@ NAN_METHOD(Map::Render) {
     NanScope();
 
     if (args.Length() != 2) {
-        NanThrowError("Wrong number of arguments");
-        NanReturnUndefined();
+        return NanThrowError("Wrong number of arguments");
+    }
+
+    if (!args[0]->IsObject()) {
+        return NanThrowTypeError("First argument must be an options object");
     }
 
     if (!args[1]->IsFunction()) {
-        NanThrowTypeError("Callback must be a function");
-        NanReturnUndefined();
+        return NanThrowTypeError("Callback must be a function");
     }
-
-    NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
-
-    if (!args[0]->IsObject()) {
-        NanThrowTypeError("First argument must be an options object");
-        NanReturnUndefined();
-    }
-
-    auto options = ParseOptions(args[0]->ToObject());
 
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     const bool empty = map->queue_.empty();
-    map->queue_.push(mbgl::util::make_unique<RenderWorker>(map, std::move(options), callback));
+
+    map->queue_.push(mbgl::util::make_unique<RenderWorker>(
+        map,
+        ParseOptions(args[0]->ToObject()),
+        new NanCallback(args[1].As<v8::Function>())));
+
     if (empty) {
         // When the queue was empty, there was no action in progress, so we can start a new one.
         NanAsyncQueueWorker(map->queue_.front().release());
@@ -169,7 +163,7 @@ NAN_METHOD(Map::Terminate) {
     NanScope();
 
     Map* map = node::ObjectWrap::Unwrap<Map>(args.Holder());
-    map->get()->terminate();
+    map->map_.terminate();
 
     NanReturnUndefined();
 }
@@ -182,12 +176,5 @@ void Map::ProcessNext() {
         NanAsyncQueueWorker(queue_.front().release());
     }
 }
-
-void Map::Resize(const unsigned int width, const unsigned int height, const float ratio) {
-    view_.resize(width, height, ratio);
-    map_->resize(width, height, ratio);
-}
-
-std::unique_ptr<uint32_t[]> Map::ReadPixels() { return view_.readPixels(); }
 
 } // ns node_mbgl
