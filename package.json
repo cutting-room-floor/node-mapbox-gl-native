@@ -7,7 +7,6 @@
     "gl"
   ],
   "main": "index.js",
-  "private": true,
   "gypfile": true,
   "repository": {
     "type": "git",
@@ -27,9 +26,10 @@
     "node-pre-gyp"
   ],
   "devDependencies": {
+    "aws-sdk": "^2.1.4",
     "mapbox-gl-test-suite": "git://github.com/mapbox/mapbox-gl-test-suite",
     "mkdirp": "^0.5.0",
-    "st": "^0.5.1",
+    "st": "^0.5.2",
     "tape": "^3.0.3"
   },
   "scripts": {
