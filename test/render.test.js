@@ -37,7 +37,7 @@ function renderTest(style, info, dir) {
             mkdirp.sync(dir);
 
             fs.writeFile(path.join(dir, process.env.UPDATE ? 'expected.png' : 'actual.png'), image, function(err) {
-                if (err) t.fail(err);
+                t.error(err);
                 t.pass('generated image async');
                 t.end();
             });

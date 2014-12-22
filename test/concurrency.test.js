@@ -20,15 +20,14 @@ function startFixtureServer(callback) {
 
 function renderTest(style, info, dir) {
     return function (t) {
-        var remaining = 2;
-        t.plan = remaining * 3;
+        var remaining = 10;
+        t.plan(remaining * 2);
         var start = +new Date;
         var map = new mbgl.Map();
         map.load(style);
         for (var i = 0; i < remaining; i++) {
             map.render(info, function(err, image) {
                 t.error(err);
-                t.equal(image.length, 24679);
                 t.ok(true, 'x10 render @ ' + ((+new Date) - start) + 'ms');
             });
         }
