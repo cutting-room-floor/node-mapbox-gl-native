@@ -1,4 +1,5 @@
 #include <node.h>
+#include <mbgl/util/std.hpp>
 #include <node_mbgl/map.hpp>
 #include <node_mbgl/display.hpp>
 #include <node_mbgl/render_worker.hpp>
@@ -155,10 +156,10 @@ NAN_METHOD(Map::Render) {
     Map *map = node::ObjectWrap::Unwrap<Map>(args.Holder());
 
     const bool empty = map->queue_.empty();
-    map->queue_.push(new RenderWorker(map, std::move(options), callback));
+    map->queue_.push(mbgl::util::make_unique<RenderWorker>(map, std::move(options), callback));
     if (empty) {
         // When the queue was empty, there was no action in progress, so we can start a new one.
-        NanAsyncQueueWorker(map->queue_.front());
+        NanAsyncQueueWorker(map->queue_.front().release());
     }
 
     NanReturnUndefined();
@@ -178,7 +179,7 @@ void Map::ProcessNext() {
     queue_.pop();
     if (!queue_.empty()) {
         // When the queue was empty, there was no action in progress, so we can start a new one.
-        NanAsyncQueueWorker(queue_.front());
+        NanAsyncQueueWorker(queue_.front().release());
     }
 }
 

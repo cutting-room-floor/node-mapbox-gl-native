@@ -63,7 +63,7 @@ private:
     fileSourcePtr fileSource_;
     mapPtr map_;
 
-    std::queue<RenderWorker *> queue_;
+    std::queue<std::unique_ptr<RenderWorker>> queue_;
 };
 
 } // ns node_mbgl
