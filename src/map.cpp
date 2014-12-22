@@ -8,10 +8,10 @@ namespace node_mbgl {
 
 Map::Map()
     : view_(display_),
-      fileSource_(std::make_shared<mbgl::CachingHTTPFileSource>(":memory:")),
-      map_(std::make_shared<mbgl::Map>(view_, *fileSource_)){};
+      fileSource_(mbgl::util::make_unique<mbgl::CachingHTTPFileSource>(":memory:")),
+      map_(std::make_shared<mbgl::Map>(view_, *fileSource_)) {};
 
-Map::~Map(){};
+Map::~Map() {};
 
 v8::Persistent<v8::Function> Map::constructor;
 
