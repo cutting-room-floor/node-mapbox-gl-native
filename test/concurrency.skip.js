@@ -56,6 +56,8 @@ startFixtureServer(function(err, port) {
     if (style.sprite) style.sprite = rewriteLocalSchema(style.sprite);
     if (style.glyphs) style.glyphs = rewriteLocalSchema(style.glyphs);
 
+    style = JSON.stringify(style);
+
     for (var key in info) {
         test(dir + ' ' + k, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));
     }

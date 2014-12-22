@@ -8,15 +8,16 @@ namespace node_mbgl {
 
 class RenderWorker : public NanAsyncWorker {
 public:
-    RenderWorker(Map *map, const RenderOptions *options, NanCallback *callback);
+    RenderWorker(Map *map, std::unique_ptr<RenderOptions> options, NanCallback *callback);
     ~RenderWorker();
 
     void Execute();
     void HandleOKCallback();
+    void WorkComplete();
 
 private:
     Map *map_;
-    const RenderOptions *options_;
+    std::unique_ptr<RenderOptions> options_;
     std::string image_;
 };
 
