@@ -35,7 +35,7 @@ Install [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native), then run
 
 ## Testing
 
-On Linux you need XServer running:
+For headless rendering on Linux you need XServer running:
 
 ```sh
 sudo apt-get install xvfb
