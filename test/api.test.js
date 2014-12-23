@@ -76,7 +76,6 @@ test('empty', function(t) {
     map.load({});
     map.render({}, function(err, image) {
         t.error(err);
-        t.equal(image.length, 4668);
         t.equal(image.toString().slice(1, 4), 'PNG');
         t.end();
     });
