@@ -16,15 +16,40 @@ mbgl.render(info, function(err, image) {});
 
 ## Installing
 
-No binaries available yet. See [building from source](#building-from-source).
+By default, installs binaries. On these platforms no external dependencies are needed.
+
+- 64 bit OS X or 64 bit Linux
+- Node v0.10.x
+
+Just run:
+
+```
+npm install
+```
+
+However, other platforms will fall back to a source compile: see [building from source](#building-from-source) for details.
 
 ## Building from source
 
-Install [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native), then run `npm install --build-from-source`.
+Install [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native) following the instruction at: https://github.com/mapbox/mapbox-gl-native#build-instructions
+
+Confirm that the `mbgl-config` program is available and on your `$PATH`.
+
+Then run:
+
+```
+npm install mapbox-gl-native --build-from-source
+```
 
 ## Testing
 
-On Linux you need XServer running:
+```
+npm test
+```
+
+## Headless Rendering
+
+For headless rendering on Linux you need XServer running:
 
 ```sh
 sudo apt-get install xvfb
