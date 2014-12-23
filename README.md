@@ -31,9 +31,23 @@ However, other platforms will fall back to a source compile: see [building from 
 
 ## Building from source
 
-Install [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native), then run `npm install --build-from-source`.
+Install [mapbox-gl-native](https://github.com/mapbox/mapbox-gl-native) following the instruction at: https://github.com/mapbox/mapbox-gl-native#build-instructions
+
+Confirm that the `mbgl-config` program is available and on your `$PATH`.
+
+Then run:
+
+```
+npm install mapbox-gl-native --build-from-source
+```
 
 ## Testing
+
+```
+npm test
+```
+
+## Headless Rendering
 
 For headless rendering on Linux you need XServer running:
 
