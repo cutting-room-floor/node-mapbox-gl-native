@@ -69,7 +69,8 @@ startFixtureServer(function(err, port) {
         style = JSON.stringify(style);
 
         for (var key in info) {
-            test(dir + ' ' + k, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));
+            var t = (dir === 'geojson') ? test.skip : test;
+            t(dir + ' ' + k, renderTest(style, info[key], path.join(suitePath, 'tests', dir, key)));
         }
     });
 
