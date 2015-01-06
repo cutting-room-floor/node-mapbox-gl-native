@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-git clone https://github.com/creationix/nvm.git ../.nvm
+git clone git@github.com:creationix/nvm.git ../.nvm
 source ../.nvm/nvm.sh
 nvm install $NODE_NVM_VERSION
 nvm use $NODE_NVM_VERSION

@@ -12,12 +12,11 @@ env:
   matrix:
   - NODE_NVM_VERSION="0.10"
   global:
-  - secure: "BbLjMTgKGqbxrvHXvahGtt7NJVrCA2TiSGzgg1DdR3JVse5SUkG4FScKRwQWsWSMHUYQP4rCxEkaEB8FHlaXFVZ6hzHKIEPI7gKlcrH+WCZW0MibGO7L5/XhfFvFRhd5iXB5WjzjrEUzppShb1xxQWIRdhVZW0pMZpsJd48hynI="
-  - secure: "cTYRVy66OUf9jYtgxIvRIlXwpykb59TK8s/ZKP21HgD+ARGbAPQ1YI8ozcDx6vB8FvspXAWz5pO9zbZWXPUEu2/dTZm+oYfrg0tGOXqEDjmc+GVfAHzKbQ2i9yD8wMqzfmwcD9GjOYXsddWuZAXOwUtTZUmG4T60gTheOZ4aqUA="
-  - LD_LIBRARY_PATH: '/usr/local/lib'
+  - LD_LIBRARY_PATH: "/usr/local/lib"
+  - secure: jkwZnKr5dcM9MQ6mOytnp6FHkbydSfa1L8d4jFp4v4K6Ee/iQh1YIq9c/J1zC0WLyuGokVGaijkKr6CW4nGZ5H8ygBtPo09imnRyH8X0bO5mEjl+KhbpdFqkXVLerpnAGMO7D6+6BtWJlK5uTDWhpeS7YayB3YfETVkllf4n6F8=
+  - secure: ZBiq+KPVM72MF0rtvpui5l7curGXckz4Pefc1L04U6dd/MPa22StvCgXBG7DKhLwI5OgHE1da769asQ3rub/pDOonxAi7fHo3+r/ocbSBZeeaj+p5i5wavppOzD27gCLrpOnSQBk0DfoD+xOM8ZCfIttBbOBMRZ1dpWFG98bJ4c=
 
 before_install:
-- export TRAVIS_OS_NAME=linux
 - ./scripts/install_nvm.sh
 - cd ./vendor/mapbox-gl-native && source ./scripts/local_mason.sh && cd ../../
 - source ./vendor/mapbox-gl-native/scripts/travis_helper.sh
@@ -30,14 +29,14 @@ install:
 - npm install --build-from-source --clang
 
 before_script:
- # Set the core file limit to unlimited so a core file is generated upon crash
- - ulimit -c unlimited -S
+# Set the core file limit to unlimited so a core file is generated upon crash
+- ulimit -c unlimited -S
 
 script:
-- npm test
+- ./scripts/travis_test.sh
 
 after_success:
-# - ./scripts/travis_publish.sh
+- ./scripts/travis_publish.sh
 
 git:
   submodules: true
