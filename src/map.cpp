@@ -6,10 +6,17 @@
 
 namespace node_mbgl {
 
+std::shared_ptr<mbgl::HeadlessDisplay> display_;
+
 v8::Persistent<v8::Function> Map::constructor;
 
+std::shared_ptr<mbgl::HeadlessDisplay> display() {
+    if (!display_) display_ = std::make_shared<mbgl::HeadlessDisplay>();
+    return display_;
+}
+
 Map::Map()
-    : view_(display_),
+    : view_(display()),
       fileSource_(""),
       map_(view_, fileSource_) {
 }
@@ -35,8 +42,12 @@ void Map::Init(v8::Handle<v8::Object> exports) {
 NAN_METHOD(Map::New) {
     NanScope();
 
-    Map *map = new Map();
-    map->Wrap(args.Holder());
+    try {
+        Map *map = new Map();
+        map->Wrap(args.Holder());
+    } catch (const std::exception &ex) {
+        NanThrowError(ex.what());
+    }
 
     NanReturnHolder();
 }
