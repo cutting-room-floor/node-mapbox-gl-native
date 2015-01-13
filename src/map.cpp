@@ -45,7 +45,7 @@ NAN_METHOD(Map::New) {
     try {
         Map *map = new Map();
         map->Wrap(args.Holder());
-    } catch (std::exception ex) {
+    } catch(std::exception &ex) {
         NanThrowError(ex.what());
     }
 
