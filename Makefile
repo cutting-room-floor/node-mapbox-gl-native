@@ -52,4 +52,4 @@ test: build
 .PHONY: clean
 clean:
 	rm -rf build
-	rm $(MBGL)/config.gypi
+	rm -f $(MBGL)/config/$(HOST).gypi
