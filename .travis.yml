@@ -49,7 +49,7 @@ matrix:
     compiler: clang
     env:
     - NODE_EXE: "node"
-    - NODE_VERSION: "0.10.35"
+    - NODE_VERSION: "0.10.36"
 
 env:
   global:

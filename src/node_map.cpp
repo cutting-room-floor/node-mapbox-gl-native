@@ -5,7 +5,7 @@
 #include <mbgl/map/still_image.hpp>
 #include <mbgl/util/exception.hpp>
 
- #include <unistd.h>
+#include <unistd.h>
 
 namespace node_mbgl {
 
@@ -238,7 +238,7 @@ void NodeMap::renderFinished() {
     assert(!image);
 
     if (img) {
-        v8::Local<v8::Object> result = v8::Object::New();
+        auto result = NanNew<v8::Object>();
         result->Set(NanNew("width"), NanNew(img->width));
         result->Set(NanNew("height"), NanNew(img->height));
 
@@ -283,9 +283,13 @@ NodeMap::NodeMap(v8::Handle<v8::Object> source_) :
     fs(*ObjectWrap::Unwrap<NodeFileSource>(source_)),
     map(view, fs, mbgl::Map::RenderMode::Still),
     async(new uv_async_t) {
-    source = v8::Persistent<v8::Object>::New(source_);
+    NanAssignPersistent(source, source_);
     async->data = this;
+#if UV_VERSION_MAJOR == 0 && UV_VERSION_MINOR <= 10
     uv_async_init(uv_default_loop(), async, [](uv_async_t *as, int) {
+#else
+    uv_async_init(uv_default_loop(), async, [](uv_async_t *as) {
+#endif
         reinterpret_cast<NodeMap *>(as->data)->renderFinished();
     });
 
@@ -294,7 +298,7 @@ NodeMap::NodeMap(v8::Handle<v8::Object> source_) :
 }
 
 NodeMap::~NodeMap() {
-    source.Dispose();
+    NanDisposePersistent(source);
 
     uv_close(reinterpret_cast<uv_handle_t *>(async), [] (uv_handle_t *handle) {
         delete reinterpret_cast<uv_async_t *>(handle);

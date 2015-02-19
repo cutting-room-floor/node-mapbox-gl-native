@@ -1,5 +1,4 @@
-#ifndef NODE_MBGL_NODE_MAP
-#define NODE_MBGL_NODE_MAP
+#pragma once
 
 #include <mbgl/map/map.hpp>
 #include <mbgl/platform/default/headless_view.hpp>
@@ -56,5 +55,3 @@ private:
 };
 
 } // end ns node_mbgl
-
-#endif
