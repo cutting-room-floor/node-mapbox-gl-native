@@ -1,8 +1,8 @@
-# node-mapbox-gl-native
+# node-mbgl
 
 Renders map tiles with [Mapbox GL](https://github.com/mapbox/mapbox-gl-native).
 
-[![Build Status](https://api.travis-ci.com/mapbox/node-mapbox-gl-native.svg?token=Phdq58g7NsfstW6gyeYW)](https://magnum.travis-ci.com/mapbox/node-mapbox-gl-native)
+[![Build Status](https://api.travis-ci.com/mapbox/node-mbgl.svg?token=Phdq58g7NsfstW6gyeYW)](https://magnum.travis-ci.com/mapbox/node-mbgl)
 
 ## Installing
 
