@@ -5,34 +5,55 @@ matrix:
   - os: linux
     compiler: clang
   - os: linux
+    compiler: clang
+    env:
+    - COVERAGE: true
+    - DEBUG: true
+  - os: linux
     compiler: gcc
-    env: JOBS=8
   - os: osx
     compiler: clang
 
 env:
   global:
-  - NODE_VERSION: 0.10.35
+  - JOBS: 8
+  - NODE_VERSION: 0.10.36
   - LD_LIBRARY_PATH: "/usr/local/lib"
   - secure: pz/HAMQpnde//JJi3f+RcW32APN6g3QyFAH41JlZwgsM5Daj9RRoXqUcNg4hEyTvlThtc5t+wQQ2ejYAjMwDu00GAzRFJ03Sm45w2fPvith9fu4crXsyPUvWUfWPC0ajTXzorN4cwFwOoMoeo9DihLwb0EC0n4T6jWdBCae3k+s=
   - secure: jYFAOQoMZkZVyc5AFPBKhR9oDqp5CciwCxFhVEHVjdImM+8V60loKazyw+bVLIjzKLnQbKKdiDudWL9TE1ylK/XSlF3K7o4gU2vIh5WzosKnU70Sanxd6tHt/Ui5eK+bAymKHbLdGiXIZtBZE0tML6+wgJ9vhV4ZKna5dM9tps4=
 
 before_install:
+- export COVERAGE=${COVERAGE:-false}
 - cd ./vendor/mbgl && source ./scripts/local_mason.sh && cd ../../
-- source ./scripts/install_node.sh
 - source ./vendor/mbgl/scripts/travis_helper.sh
 - source ./vendor/mbgl/scripts/flags.sh
 - source ./vendor/mbgl/scripts/travis_before_install.sh
 - source ./scripts/setup_mesa.sh
+- source ./scripts/install_node.sh
+- source ./scripts/install_coveralls.sh
 
 install:
-- npm install --build-from-source
+- if [[ ${COVERAGE} == true ]]; then
+      make coverage;
+  else
+      npm install --build-from-source;
+  fi;
 
 before_script:
 - ulimit -c unlimited -S
 
 script:
 - "./scripts/travis_test.sh"
+- if [[ ${COVERAGE} == true ]]; then
+      cpp-coveralls
+      --exclude node_modules \
+      --exclude test \
+      --exclude vendor \
+      --exclude build/Release/obj/gen \
+      --build-root build \
+      --gcov-options '\-lp';
+  fi;
+
 
 after_success:
 - "./scripts/travis_publish.sh"
