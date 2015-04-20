@@ -3,6 +3,7 @@
 Renders map tiles with [Mapbox GL](https://github.com/mapbox/mapbox-gl-native).
 
 [![Build Status](https://travis-ci.org/mapbox/node-mapbox-gl-native.svg?branch=master)](https://travis-ci.org/mapbox/node-mapbox-gl-native)
+[![Coverage Status](https://coveralls.io/repos/mapbox/node-mapbox-gl-native/badge.svg?branch=coverage)](https://coveralls.io/r/osmcode/node-osmium?branch=coverage)
 
 ## Installing
 
