@@ -11,7 +11,7 @@ fi
 
 # Generate coveralls test coverage
 if [[ ${COVERAGE} == true ]]; then
-    cpp-coveralls
+    cpp-coveralls \
     --exclude node_modules \
     --exclude test \
     --exclude vendor \
