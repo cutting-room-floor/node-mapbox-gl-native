@@ -72,10 +72,6 @@ test-js:
 .PHONY: test
 test: test-js test-suite
 
-coverage: build/Makefile
-	@LDFLAGS="--coverage" CXXFLAGS="--coverage" $(NODE_PRE_GYP) build $(DEBUG_FLAG) --clang -- -j$(JOBS)
-	
-
 .PHONY: clean
 clean:
 	rm -rf build lib

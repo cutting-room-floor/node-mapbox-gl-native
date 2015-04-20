@@ -5,8 +5,10 @@ matrix:
   - os: linux
     compiler: clang
     env:
-    - COVERAGE: true
     - DEBUG: true
+    - COVERAGE: true
+    - CXXFLAGS: "--coverage"
+    - LDFLAGS: "--coverage"
   - os: linux
     compiler: clang
   - os: linux
@@ -33,26 +35,13 @@ before_install:
 - source ./scripts/install_coveralls.sh
 
 install:
-- if [[ ${COVERAGE} == true ]]; then
-      make coverage;
-  else
-      npm install --build-from-source;
-  fi;
+- npm install --build-from-source;
 
 before_script:
 - ulimit -c unlimited -S
 
 script:
 - "./scripts/travis_test.sh"
-- if [[ ${COVERAGE} == true ]]; then
-      cpp-coveralls
-      --exclude node_modules \
-      --exclude test \
-      --exclude vendor \
-      --exclude build/Release/obj/gen \
-      --build-root build \
-      --gcov-options '\-lp';
-  fi;
 
 
 after_success:
