@@ -220,7 +220,7 @@ test('Map', function(t) {
             });
         });
 
-        t.skip('returns an error', function(t) {
+        t.test('returns an error', function(t) {
             mbgl.on('message', function(msg) {
                 t.ok(msg, 'emits error');
                 t.equal(msg.class, 'ResourceLoader');
