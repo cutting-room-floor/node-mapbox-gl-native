@@ -167,6 +167,78 @@ test('Map', function(t) {
         t.end();
     });
 
+    t.test('request coalesting', function(t) {
+        var requestList = [];
+        var fileSource = new mbgl.FileSource();
+
+        // This file source will never reply to any
+        // request other than "./fixtures/tiles.tilejson"
+        fileSource.request = function(req) {
+            if (req.url != "./fixtures/tiles.tilejson") {
+                requestList.push(req);
+                return;
+            }
+
+            fs.readFile(path.join('test', req.url), function(err, data) {
+                req.respond(err, { data: data });
+            });
+        };
+
+        fileSource.cancel = function() {
+            requestList.pop();
+        };
+
+        t.test('merge requests for the same resource', function(t) {
+            var map1 = new mbgl.Map(fileSource);
+            var map2 = new mbgl.Map(fileSource);
+            var map3 = new mbgl.Map(fileSource);
+            var map4 = new mbgl.Map(fileSource);
+            var map5 = new mbgl.Map(fileSource);
+
+            map1.load(style);
+            map2.load(style);
+            map3.load(style);
+            map4.load(style);
+            map5.load(style);
+
+            var renderCallback = function(err, data) {}
+
+            map1.render({}, renderCallback);
+            map2.render({}, renderCallback);
+            map3.render({}, renderCallback);
+            map4.render({}, renderCallback);
+            map5.render({}, renderCallback);
+
+            var checkCancel = function() {
+                t.equal(requestList.length, 0);
+                t.end();
+            };
+
+            var checkCoalescing = function() {
+                // Check if all the 5 vector tile
+                // requests are going to merge in
+                // a single request.
+                t.equal(requestList.length, 1);
+
+                // This should cause the pending
+                // resources to get canceled, but
+                // only one cancel is emitted, because
+                // all map objects requested the same
+                // resource.
+                map1.release();
+                map2.release();
+                map3.release();
+                map4.release();
+                map5.release();
+
+                setTimeout(checkCancel, 500);
+            };
+
+            setTimeout(checkCoalescing, 500);
+        });
+        t.end();
+    });
+
     t.test('render argument requirements', function(t) {
         var fileSource = new mbgl.FileSource();
         fileSource.request = function(req) {
