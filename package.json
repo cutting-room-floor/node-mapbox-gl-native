@@ -21,9 +21,6 @@
     "nan": "^1.8.4",
     "node-pre-gyp": "^0.6.7"
   },
-  "bundledDependencies": [
-    "node-pre-gyp"
-  ],
   "devDependencies": {
     "aws-sdk": "^2.1.27",
     "faucet": "0.0.1",
@@ -37,6 +34,5 @@
     "test": "make test",
     "rebuild": "make clean && make",
     "build": "make"
-  },
-  "gypfile": true
+  }
 }
