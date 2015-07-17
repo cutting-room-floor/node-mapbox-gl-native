@@ -5,7 +5,6 @@
 var mbgl = require('..');
 var fs = require('fs');
 var path = require('path');
-var PNG = require('pngjs').PNG;
 
 var base = path.join(path.dirname(process.mainModule.filename), '../test');
 
@@ -24,16 +23,11 @@ map.load(require('../test/fixtures/style.json'));
 map.render({}, function(err, data) {
     if (err) throw err;
 
-    var png = new PNG({
-        width: data.width,
-        height: data.height
+    var wstream = fs.createWriteStream('image.png');
+    wstream.on('finish', function() {
+        console.warn('Written image.png');
     });
 
-    png.data = data.pixels;
-
-    png.pack()
-        .pipe(fs.createWriteStream('image.png'))
-        .on('finish', function() {
-            console.warn('Written image.png');
-        });
+    wstream.write(data.pixels);
+    wstream.end();
 });

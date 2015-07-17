@@ -8,7 +8,6 @@ var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var style = require('../fixtures/style.json');
-var PNG = require('pngjs').PNG;
 var compare = require('../compare.js');
 
 function filePath(name) {
@@ -394,27 +393,22 @@ test('Map', function(t) {
 
                     var filename = filePath('image.png');
 
-                    var png = new PNG({
-                        width: data.width,
-                        height: data.height
-                    });
-
-                    png.data = data.pixels;
-
                     if (process.env.UPDATE) {
-                        png.pack()
-                            .pipe(fs.createWriteStream(filename.expected))
-                            .on('finish', t.end);
+                        var wstream = fs.createWriteStream(filename.expected);
+                        wstream.on('finish', t.end);
+                        wstream.write(data.pixels);
+                        wstream.end();
                     } else {
-                        png.pack()
-                            .pipe(fs.createWriteStream(filename.actual))
-                            .on('finish', function() {
-                                compare(filename.actual, filename.expected, filename.diff, t, function(err, diff) {
-                                    t.error(err);
-                                    t.ok(diff <= 0.01, 'actual matches expected');
-                                    t.end();
-                                });
+                        var wstream = fs.createWriteStream(filename.actual);
+                        wstream.on('finish', function() {
+                            compare(filename.actual, filename.expected, filename.diff, t, function(err, diff) {
+                                t.error(err);
+                                t.ok(diff <= 0.01, 'actual matches expected');
+                                t.end();
                             });
+                        });
+                        wstream.write(data.pixels);
+                        wstream.end();
                     }
                 });
             });
