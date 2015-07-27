@@ -194,7 +194,9 @@ NAN_METHOD(NodeMap::Render) {
 }
 
 void NodeMap::startRender(std::unique_ptr<NodeMap::RenderOptions> options) {
-    map->resize(options->width, options->height, options->ratio);
+    // TODO: assume attached View is correct size?
+    // map->resize(options->width, options->height, options->ratio);
+
     map->setClasses(options->classes);
     map->setLatLngZoom(mbgl::LatLng(options->latitude, options->longitude), options->zoom);
     map->setBearing(options->bearing);
@@ -323,7 +325,10 @@ void NodeMap::release() {
 // Instance
 
 NodeMap::NodeMap(v8::Handle<v8::Object> source_) :
-    view(sharedDisplay()),
+    // TODO: don't instantiate View here,
+    // require it to be explicitly attached later
+    view(sharedDisplay(), 1.0),
+
     fs(*ObjectWrap::Unwrap<NodeFileSource>(source_)),
     map(std::make_unique<mbgl::Map>(view, fs, mbgl::MapMode::Still)),
     async(new uv_async_t) {
