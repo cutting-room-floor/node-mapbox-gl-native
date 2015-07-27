@@ -1,9 +1,9 @@
 #pragma once
 
 #include "node_file_source.hpp"
+#include "node_view.hpp"
 
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_view.hpp>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -44,11 +44,11 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
 private:
-    NodeMap(v8::Handle<v8::Object>);
+    NodeMap(v8::Handle<v8::Object>, v8::Handle<v8::Object>);
     ~NodeMap();
 
 private:
-    mbgl::HeadlessView view;
+    v8::Persistent<v8::Object> view;
     NodeFileSource fs;
     std::unique_ptr<mbgl::Map> map;
 

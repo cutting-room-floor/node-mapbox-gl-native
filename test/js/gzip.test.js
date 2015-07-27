@@ -28,7 +28,11 @@ function filePath(name) {
 }
 
 function setup(options, callback) {
-    callback(new mbgl.Map(options));
+    callback(new mbgl.Map(options, new mbgl.View({
+        width: 512,
+        height: 512,
+        ratio: 1.0
+    })));
 }
 
 function getOptions(gzip, t) {

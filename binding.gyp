@@ -19,6 +19,8 @@
         'src/node_map.cpp',
         'src/node_request.hpp',
         'src/node_request.cpp',
+        'src/node_view.hpp',
+        'src/node_view.cpp',
         'src/util/async_queue.hpp',
       ],
 

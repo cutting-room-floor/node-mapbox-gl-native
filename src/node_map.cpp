@@ -1,6 +1,5 @@
 #include "node_map.hpp"
 
-#include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/map/still_image.hpp>
 #include <mbgl/util/exception.hpp>
 
@@ -24,11 +23,6 @@ struct NodeMap::RenderOptions {
 
 v8::Persistent<v8::FunctionTemplate> NodeMap::constructorTemplate;
 
-static std::shared_ptr<mbgl::HeadlessDisplay> sharedDisplay() {
-    static auto display = std::make_shared<mbgl::HeadlessDisplay>();
-    return display;
-}
-
 const static char* releasedMessage() {
     return "Map resources have already been released";
 }
@@ -48,9 +42,6 @@ void NodeMap::Init(v8::Handle<v8::Object> target) {
     NanAssignPersistent(constructorTemplate, t);
 
     target->Set(NanNew("Map"), t->GetFunction());
-
-    // Initialize display connection on module load.
-    sharedDisplay();
 }
 
 NAN_METHOD(NodeMap::New) {
@@ -74,8 +65,14 @@ NAN_METHOD(NodeMap::New) {
         return NanThrowError("Options object 'cancel' property must be a function");
     }
 
+    if (args.Length() < 2 || !NanHasInstance(NodeView::constructorTemplate, args[1])) {
+        return NanThrowTypeError("Requires a View as second argument");
+    }
+
+    auto view = args[1]->ToObject();
+
     try {
-        auto nodeMap = new NodeMap(options);
+        auto nodeMap = new NodeMap(options, view);
         nodeMap->Wrap(args.This());
     } catch(std::exception &ex) {
         return NanThrowError(ex.what());
@@ -192,7 +189,9 @@ NAN_METHOD(NodeMap::Render) {
 }
 
 void NodeMap::startRender(std::unique_ptr<NodeMap::RenderOptions> options) {
+    // TODO: throw exception if View ratio and dimensions do not match RenderOptions ratio and dimension
     map->resize(options->width, options->height, options->ratio);
+
     map->setClasses(options->classes);
     map->setLatLngZoom(mbgl::LatLng(options->latitude, options->longitude), options->zoom);
     map->setBearing(options->bearing);
@@ -311,6 +310,8 @@ void NodeMap::release() {
         delete reinterpret_cast<uv_async_t *>(handle);
     });
 
+    NanDisposePersistent(view);
+
     map.reset(nullptr);
 }
 
@@ -318,11 +319,13 @@ void NodeMap::release() {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Instance
 
-NodeMap::NodeMap(v8::Handle<v8::Object> options) :
-    view(sharedDisplay()),
+NodeMap::NodeMap(v8::Handle<v8::Object> options, v8::Handle<v8::Object> view_) :
     fs(options),
-    map(std::make_unique<mbgl::Map>(view, fs, mbgl::MapMode::Still)),
+    map(std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view_)->get(), fs, mbgl::MapMode::Still)),
     async(new uv_async_t) {
+
+    // TODO: don't require View in Map constructor?
+    NanAssignPersistent(view, view_);
 
     async->data = this;
 #if UV_VERSION_MAJOR == 0 && UV_VERSION_MINOR <= 10

@@ -21,7 +21,11 @@ function filePath(name) {
 }
 
 function setup(options, callback) {
-    callback(new mbgl.Map(options));
+    callback(new mbgl.Map(options, new mbgl.View({
+        width: 512,
+        height: 512,
+        ratio: 1.0
+    })));
 }
 
 test('Map', function(t) {
@@ -66,7 +70,11 @@ test('Map', function(t) {
 
             options.cancel = function() {};
             t.doesNotThrow(function() {
-                new mbgl.Map(options);
+                new mbgl.Map(options, new mbgl.View({
+                    width: 512,
+                    height: 512,
+                    ratio: 1.0
+                }));
             });
 
             t.end();
