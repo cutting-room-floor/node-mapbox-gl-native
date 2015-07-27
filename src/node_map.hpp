@@ -1,7 +1,8 @@
 #pragma once
 
+#include "node_view.hpp"
+
 #include <mbgl/map/map.hpp>
-#include <mbgl/platform/default/headless_view.hpp>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -51,7 +52,7 @@ private:
     // For retaining the FileSource object.
     v8::Persistent<v8::Object> source;
 
-    mbgl::HeadlessView view;
+    std::unique_ptr<NodeView> view;
     NodeFileSource &fs;
     std::unique_ptr<mbgl::Map> map;
 
