@@ -12,6 +12,9 @@
 namespace node_mbgl {
 
 class NodeView : public node::ObjectWrap {
+
+struct Options;
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Static Node Methods
 public:
@@ -23,14 +26,14 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
 private:
-    NodeView();
+    NodeView(Options*);
     ~NodeView();
 
-    std::unique_ptr<mbgl::HeadlessView> view;
+    mbgl::HeadlessView view;
 
 public:
-    inline std::unique_ptr<mbgl::HeadlessView> get() {
-        return std::move(view);
+    inline mbgl::HeadlessView* get() {
+        return &view;
     }
 
 };

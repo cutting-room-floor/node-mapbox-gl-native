@@ -45,14 +45,14 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
 private:
-    NodeMap(v8::Handle<v8::Object> source);
+    NodeMap(v8::Handle<v8::Object>, v8::Handle<v8::Object>);
     ~NodeMap();
 
 private:
     // For retaining the FileSource object.
     v8::Persistent<v8::Object> source;
 
-    std::unique_ptr<NodeView> view;
+    NodeView &view;
     NodeFileSource &fs;
     std::unique_ptr<mbgl::Map> map;
 

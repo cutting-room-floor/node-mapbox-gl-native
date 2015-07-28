@@ -66,9 +66,14 @@ NAN_METHOD(NodeMap::New) {
         return NanThrowError("FileSource must have a cancel member function");
     }
 
+    if (args.Length() < 2 || !NanHasInstance(NodeView::constructorTemplate, args[1])) {
+        return NanThrowTypeError("Requires a View as second argument");
+    }
+
+    auto view = args[1]->ToObject();
 
     try {
-        auto nodeMap = new NodeMap(source);
+        auto nodeMap = new NodeMap(source, view);
         nodeMap->Wrap(args.This());
     } catch(std::exception &ex) {
         return NanThrowError(ex.what());
@@ -314,11 +319,11 @@ void NodeMap::release() {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Instance
 
-NodeMap::NodeMap(v8::Handle<v8::Object> source_) :
-    fs(*ObjectWrap::Unwrap<NodeFileSource>(source_)),
-
+NodeMap::NodeMap(v8::Handle<v8::Object> source_, v8::Handle<v8::Object> view_) :
     // TODO: don't require View in Map constructor?
-    map(std::make_unique<mbgl::Map>(view->get(), fs, mbgl::MapMode::Still)),
+    view(*ObjectWrap::Unwrap<NodeView>(view_)),
+    fs(*ObjectWrap::Unwrap<NodeFileSource>(source_)),
+    map(std::make_unique<mbgl::Map>(*view.get(), fs, mbgl::MapMode::Still)),
     async(new uv_async_t) {
 
     NanAssignPersistent(source, source_);

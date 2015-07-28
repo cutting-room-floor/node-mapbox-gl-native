@@ -10,8 +10,8 @@ namespace node_mbgl {
 
 struct NodeView::Options {
     float ratio = 1.0f;
-    unsigned int width = 512;
-    unsigned int height = 512;
+    uint16_t width = 512;
+    uint16_t height = 512;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ NAN_METHOD(NodeView::New) {
     }
 
     auto obj = args[0]->ToObject();
-    auto options = std::make_unique<Options>();
+    auto options = new Options;
 
     if (obj->Has(NanNew("ratio"))) { options->ratio = obj->Get(NanNew("ratio"))->IntegerValue(); }
     if (obj->Has(NanNew("width"))) { options->width = obj->Get(NanNew("width"))->IntegerValue(); }
@@ -71,11 +71,11 @@ NAN_METHOD(NodeView::New) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Instance
 
-NodeView::NodeView(Options options)
-  : view(sharedDisplay(), options.ratio, options.width, options.height) {}
+NodeView::NodeView(Options* options)
+  : view(sharedDisplay(), options->ratio, options->width, options->height) {}
 
 NodeView::~NodeView() {
-    view.reset(nullptr);
+    // view.reset(nullptr);
 }
 
 }
