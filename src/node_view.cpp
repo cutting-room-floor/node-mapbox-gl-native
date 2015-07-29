@@ -54,9 +54,23 @@ NAN_METHOD(NodeView::New) {
     auto obj = args[0]->ToObject();
     auto options = new Options;
 
-    if (obj->Has(NanNew("ratio"))) { options->ratio = obj->Get(NanNew("ratio"))->IntegerValue(); }
-    if (obj->Has(NanNew("width"))) { options->width = obj->Get(NanNew("width"))->IntegerValue(); }
-    if (obj->Has(NanNew("height"))) { options->height = obj->Get(NanNew("height"))->IntegerValue(); }
+    if (obj->Has(NanNew("ratio")) && obj->Get(NanNew("ratio"))->IsNumber()) {
+        options->ratio = obj->Get(NanNew("ratio"))->IntegerValue();
+    } else {
+        return NanThrowError("Options object must have a numerical ratio attribute");
+    }
+
+    if (obj->Has(NanNew("width")) && obj->Get(NanNew("width"))->IsNumber()) {
+        options->width = obj->Get(NanNew("width"))->IntegerValue();
+    } else {
+        return NanThrowError("Options object must have a numerical width attribute");
+    }
+
+    if (obj->Has(NanNew("height")) && obj->Get(NanNew("height"))->IsNumber()) {
+        options->height = obj->Get(NanNew("height"))->IntegerValue();
+    } else {
+        return NanThrowError("Options object must have a numerical height attribute");
+    }
 
     try {
         auto nodeView = new NodeView(options);
