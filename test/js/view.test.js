@@ -70,7 +70,18 @@ test('View', function(t) {
         t.end();
     });
 
-    t.skip('can be attached to a Map object', function(t) {
+    t.test('can be passed to Map constructor', function(t) {
+        var fileSource = new mbgl.FileSource();
+        fileSource.request = function() {};
+        fileSource.cancel = function() {};
+
+        var view = new mbgl.View({ ratio: 1.0, width: 512, height: 512 });
+
+
+        t.doesNotThrow(function() {
+            new mbgl.Map(fileSource, view);
+        });
+
         t.end();
     });
 
