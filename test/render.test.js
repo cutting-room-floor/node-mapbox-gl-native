@@ -48,7 +48,13 @@ function renderTest(style, info, base, key) {
         };
         fileSource.cancel = function() {};
 
-        var map = new mbgl.Map(fileSource);
+        var view = new mbgl.View({
+            ratio: 1.0,
+            width: 512,
+            height: 512
+        });
+
+        var map = new mbgl.Map(fileSource, view);
         map.load(style);
 
         map.render(info[key], function(err, data) {
