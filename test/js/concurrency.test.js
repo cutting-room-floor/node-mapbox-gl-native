@@ -9,6 +9,7 @@ var path = require('path');
 
 var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
 
+console.log(suitePath);
 
 function renderTest(style, info, dir, key) {
     return function (t) {
@@ -25,7 +26,13 @@ function renderTest(style, info, dir, key) {
         };
         fileSource.cancel = function() {};
 
-        var map = new mbgl.Map(fileSource);
+        var view = new mbgl.View({
+            ratio: 1.0,
+            width: 512,
+            height: 512
+        });
+
+        var map = new mbgl.Map(fileSource, view);
         map.load(style);
 
         function render() {

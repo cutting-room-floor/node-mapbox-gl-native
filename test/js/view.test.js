@@ -75,7 +75,11 @@ test('View', function(t) {
         fileSource.request = function() {};
         fileSource.cancel = function() {};
 
-        var view = new mbgl.View({ ratio: 1.0, width: 512, height: 512 });
+        var view = new mbgl.View({
+            ratio: 1.0,
+            width: 512,
+            height: 512
+        });
 
         t.doesNotThrow(function() {
             new mbgl.Map(fileSource, view);
