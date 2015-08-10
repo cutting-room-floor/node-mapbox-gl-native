@@ -36,34 +36,34 @@ NAN_METHOD(NodeRequest::New) {
     }
 
     auto source = reinterpret_cast<NodeFileSource*>(args[0].As<v8::External>()->Value());
-    auto resource = reinterpret_cast<mbgl::Resource*>(args[1].As<v8::External>()->Value());
-    auto req = new NodeRequest(source, *resource);
+    auto resource = reinterpret_cast<mbgl::Request*>(args[1].As<v8::External>()->Value());
+    auto req = new NodeRequest(source, resource);
     req->Wrap(args.This());
 
     NanReturnValue(args.This());
 }
 
-v8::Handle<v8::Object> NodeRequest::Create(NodeFileSource* source, const mbgl::Resource& resource) {
+v8::Handle<v8::Object> NodeRequest::Create(NodeFileSource* source, mbgl::Request* request) {
     NanEscapableScope();
 
     v8::Local<v8::Value> argv[] = { NanNew<v8::External>(const_cast<NodeFileSource*>(source)),
-        NanNew<v8::External>(const_cast<mbgl::Resource*>(&resource)) };
+        NanNew<v8::External>(request) };
     auto instance = NanNew<v8::FunctionTemplate>(constructorTemplate)->GetFunction()->NewInstance(2, argv);
 
-    instance->ForceSet(NanNew("url"), NanNew(resource.url), v8::ReadOnly);
-    instance->ForceSet(NanNew("kind"), NanNew<v8::Integer>(int(resource.kind)), v8::ReadOnly);
+    instance->ForceSet(NanNew("url"), NanNew(request->resource.url), v8::ReadOnly);
+    instance->ForceSet(NanNew("kind"), NanNew<v8::Integer>(int(request->resource.kind)), v8::ReadOnly);
 
     return NanEscapeScope(instance);
 }
 
 NAN_METHOD(NodeRequest::Respond) {
     auto nodeRequest = ObjectWrap::Unwrap<NodeRequest>(args.Holder());
-    if (!nodeRequest->resource) {
+    if (!nodeRequest->request) {
         return NanThrowError("Request has already been responded to, or was canceled.");
     }
 
     auto source = nodeRequest->source;
-    auto resource = std::move(nodeRequest->resource);
+    auto request = std::move(nodeRequest->request);
 
     if (args.Length() < 1) {
         return NanThrowTypeError("First argument must be an error object");
@@ -76,7 +76,7 @@ NAN_METHOD(NodeRequest::Respond) {
         const NanUtf8String message { args[0]->ToString() };
         response->message = std::string { *message, size_t(message.length()) };
 
-        source->notify(*resource, response);
+        source->notify(request, response);
     } else if (args.Length() < 2 || !args[1]->IsObject()) {
         return NanThrowTypeError("Second argument must be a response object");
     } else {
@@ -120,7 +120,7 @@ NAN_METHOD(NodeRequest::Respond) {
         }
 
         // Send the response object to the NodeFileSource object
-        source->notify(*resource, response);
+        source->notify(request, response);
     }
 
     NanReturnUndefined();
@@ -129,14 +129,14 @@ NAN_METHOD(NodeRequest::Respond) {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Instance
 
-NodeRequest::NodeRequest(NodeFileSource* source_, const mbgl::Resource& resource_)
+NodeRequest::NodeRequest(NodeFileSource* source_, mbgl::Request* request_)
     : source(source_),
-    resource(std::make_unique<mbgl::Resource>(resource_)) {}
+    request(request_) {}
 
 NodeRequest::~NodeRequest() {}
 
 void NodeRequest::cancel() {
-    resource.reset();
+    request = nullptr;
 }
 
 }

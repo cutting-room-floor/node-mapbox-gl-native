@@ -4,21 +4,19 @@
 
 #include <mbgl/storage/request.hpp>
 
-#include <algorithm>
-
 namespace node_mbgl {
 
 struct NodeFileSource::Action {
     const enum : bool { Add, Cancel } type;
-    mbgl::Resource const resource;
+    mbgl::Request *const request;
 };
 
 NodeFileSource::NodeFileSource(v8::Handle<v8::Object> options_) :
     queue(new Queue(uv_default_loop(), [this](Action &action) {
         if (action.type == Action::Add) {
-            processAdd(action.resource);
+            processAdd(action.request);
         } else if (action.type == Action::Cancel) {
-            processCancel(action.resource);
+            processCancel(action.request);
         }
     }))
 {
@@ -38,17 +36,9 @@ NodeFileSource::~NodeFileSource() {
 mbgl::Request* NodeFileSource::request(const mbgl::Resource& resource, uv_loop_t* loop, Callback callback) {
     auto req = new mbgl::Request(resource, loop, std::move(callback));
 
-    std::lock_guard<std::mutex> lock(observersMutex);
-    auto it = observers.find(resource);
-    if (it == observers.end()) {
-        observers[resource] = { req };
-
-        // This function can be called from any thread. Make sure we're executing the actual call in the
-        // file source loop by sending it over the queue. It will be processed in processAction().
-        queue->send(Action{ Action::Add, resource });
-    } else {
-        it->second.emplace_back(req);
-    }
+    // This function can be called from any thread. Make sure we're executing the actual call in the
+    // file source loop by sending it over the queue. It will be processed in processAction().
+    queue->send(Action{ Action::Add, req });
 
     return req;
 }
@@ -56,32 +46,12 @@ mbgl::Request* NodeFileSource::request(const mbgl::Resource& resource, uv_loop_t
 void NodeFileSource::cancel(mbgl::Request* req) {
     req->cancel();
 
-    std::lock_guard<std::mutex> lock(observersMutex);
-
-    auto observersIter = observers.find(req->resource);
-    if (observersIter == observers.end()) {
-        return;
-    }
-
-    auto& observersList = observersIter->second;
-    auto observersListIter = std::find(observersList.begin(), observersList.end(), req);
-    if (observersListIter == observersList.end()) {
-        return;
-    }
-
-    observersList.erase(observersListIter);
-    if (observersList.empty()) {
-        observers.erase(observersIter);
-
-        // This function can be called from any thread. Make sure we're executing the actual call in the
-        // file source loop by sending it over the queue. It will be processed in processAction().
-        queue->send(Action{ Action::Cancel, req->resource });
-    }
-
-    req->destruct();
+    // This function can be called from any thread. Make sure we're executing the actual call in the
+    // file source loop by sending it over the queue. It will be processed in processAction().
+    queue->send(Action{ Action::Cancel, req });
 }
 
-void NodeFileSource::processAdd(const mbgl::Resource& resource) {
+void NodeFileSource::processAdd(mbgl::Request *req) {
     NanScope();
 
     // Make sure the loop stays alive as long as request is pending.
@@ -89,11 +59,11 @@ void NodeFileSource::processAdd(const mbgl::Resource& resource) {
         queue->ref();
     }
 
-    auto requestHandle = NanNew<v8::Object>(NodeRequest::Create(this, resource));
+    auto requestHandle = NanNew<v8::Object>(NodeRequest::Create(this, req));
 
     v8::Persistent<v8::Object> requestPersistent;
     NanAssignPersistent(requestPersistent, requestHandle);
-    pending.emplace(resource, std::move(requestPersistent));
+    pending.emplace(req, std::move(requestPersistent));
 
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
     auto requestFunction = v8::Local<v8::Object>::New(v8::Isolate::GetCurrent(), options)->Get(NanNew("request")).As<v8::Function>();
@@ -105,10 +75,10 @@ void NodeFileSource::processAdd(const mbgl::Resource& resource) {
     NanMakeCallback(NanGetCurrentContext()->Global(), requestFunction, 1, argv);
 }
 
-void NodeFileSource::processCancel(const mbgl::Resource& resource) {
+void NodeFileSource::processCancel(mbgl::Request *req) {
     NanScope();
 
-    auto it = pending.find(resource);
+    auto it = pending.find(req);
     if (it == pending.end()) {
         // The response callback was already fired. There is no point in calling the cancelation
         // callback because the request is already completed.
@@ -142,11 +112,14 @@ void NodeFileSource::processCancel(const mbgl::Resource& resource) {
         // Set the request handle in the request wrapper handle to null
         node::ObjectWrap::Unwrap<NodeRequest>(requestHandle)->cancel();
     }
+
+    // Finally, destruct the request object
+    req->destruct();
 }
 
-void NodeFileSource::notify(const mbgl::Resource& resource, const std::shared_ptr<const mbgl::Response>& response) {
+void NodeFileSource::notify(mbgl::Request *req, const std::shared_ptr<const mbgl::Response>& response) {
     // First, remove the request, since it might be destructed at any point now.
-    auto it = pending.find(resource);
+    auto it = pending.find(req);
     if (it != pending.end()) {
 #if (NODE_MODULE_VERSION > NODE_0_10_MODULE_VERSION)
         it->second.Reset();
@@ -161,23 +134,7 @@ void NodeFileSource::notify(const mbgl::Resource& resource, const std::shared_pt
         }
     }
 
-    std::vector<mbgl::Request*> observersList;
-
-    {
-        std::lock_guard<std::mutex> lock(observersMutex);
-
-        auto observersIter = observers.find(resource);
-        if (observersIter == observers.end()) {
-            return;
-        }
-
-        observersList.swap(observersIter->second);
-        observers.erase(observersIter);
-    }
-
-    for (auto request : observersList) {
-        request->notify(response);
-    }
+    req->notify(response);
 }
 
 }
