@@ -48,11 +48,7 @@ function renderTest(style, info, base, key) {
         };
         options.cancel = function() {};
 
-        var view = new mbgl.View({
-            width: 512,
-            height: 512,
-            ratio: 1.0
-        });
+        var view = new mbgl.View(info[key]);
 
         var map = new mbgl.Map(options, view);
         map.load(style);

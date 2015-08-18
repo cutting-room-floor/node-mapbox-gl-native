@@ -27,7 +27,7 @@ test('View', function(t) {
             t.end();
         });
 
-        t.test('should require the options object to have pixel ratio, width and height attributes', function(t) {
+        t.skip('should require the options object to have pixel ratio, width and height attributes', function(t) {
             var options = {};
 
             t.throws(function() {

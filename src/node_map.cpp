@@ -190,7 +190,6 @@ NAN_METHOD(NodeMap::Render) {
 
 void NodeMap::startRender(std::unique_ptr<NodeMap::RenderOptions> options) {
     // TODO: throw exception if View ratio and dimensions do not match RenderOptions ratio and dimension
-    map->resize(options->width, options->height, options->ratio);
 
     map->setClasses(options->classes);
     map->setLatLngZoom(mbgl::LatLng(options->latitude, options->longitude), options->zoom);
