@@ -78,14 +78,16 @@ test('Map', function(t) {
             }, /Options object must have a 'view' or 'scale' property/);
 
             t.doesNotThrow(function() {
+                var view = new mbgl.View({
+                    width: 512,
+                    height: 512,
+                    ratio: 1.0
+                });
+
                 var map = new mbgl.Map({
                     request: options.request,
                     cancel: options.cancel,
-                    view: new mbgl.View({
-                        width: 512,
-                        height: 512,
-                        ratio: 1.0
-                    })
+                    view: view
                 });
 
                 map.release();
