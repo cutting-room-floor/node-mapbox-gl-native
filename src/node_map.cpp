@@ -38,6 +38,7 @@ void NodeMap::Init(v8::Handle<v8::Object> target) {
     NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(t, "render", Render);
     NODE_SET_PROTOTYPE_METHOD(t, "release", Release);
+    NODE_SET_PROTOTYPE_METHOD(t, "setView", SetView);
 
     NanAssignPersistent(constructorTemplate, t);
 
@@ -61,18 +62,18 @@ NAN_METHOD(NodeMap::New) {
     if (!options->Has(NanNew("request")) || !options->Get(NanNew("request"))->IsFunction()) {
         return NanThrowError("Options object must have a 'request' method");
     }
+
     if (options->Has(NanNew("cancel")) && !options->Get(NanNew("cancel"))->IsFunction()) {
         return NanThrowError("Options object 'cancel' property must be a function");
     }
 
-    if (args.Length() < 2 || !NanHasInstance(NodeView::constructorTemplate, args[1])) {
-        return NanThrowTypeError("Requires a View as second argument");
+    if ((!options->Has(NanNew("view")) || !NanHasInstance(NodeView::constructorTemplate, options->Get(NanNew("view")))) &&
+        (!options->Has(NanNew("scale")) || !options->Get(NanNew("scale"))->IsNumber())) {
+        return NanThrowTypeError("Options object must have a 'view' or 'scale' property");
     }
 
-    auto view = args[1]->ToObject();
-
     try {
-        auto nodeMap = new NodeMap(options, view);
+        auto nodeMap = new NodeMap(options);
         nodeMap->Wrap(args.This());
     } catch(std::exception &ex) {
         return NanThrowError(ex.what());
@@ -284,6 +285,20 @@ void NodeMap::renderFinished() {
     }
 }
 
+NAN_METHOD(NodeMap::SetView) {
+    NanScope();
+
+    auto nodeMap = node::ObjectWrap::Unwrap<NodeMap>(args.Holder());
+
+    if (args.Length() < 1 || !NanHasInstance(NodeView::constructorTemplate, args[0])) {
+        return NanThrowTypeError("Requires a View as first argument");
+    }
+
+    nodeMap->setView(args[0].As<v8::Object>());
+
+    NanReturnUndefined();
+}
+
 NAN_METHOD(NodeMap::Release) {
     NanScope();
 
@@ -298,6 +313,13 @@ NAN_METHOD(NodeMap::Release) {
     }
 
     NanReturnUndefined();
+}
+
+void NodeMap::setView(v8::Handle<v8::Object> view_) {
+    NanAssignPersistent(view, view_);
+
+    auto nodeView = node::ObjectWrap::Unwrap<NodeView>(view);
+    map->setView(nodeView->get());
 }
 
 void NodeMap::release() {
@@ -318,13 +340,17 @@ void NodeMap::release() {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Instance
 
-NodeMap::NodeMap(v8::Handle<v8::Object> options, v8::Handle<v8::Object> view_) :
+NodeMap::NodeMap(v8::Handle<v8::Object> options) :
     fs(options),
-    map(std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view_)->get(), fs, mbgl::MapMode::Still)),
     async(new uv_async_t) {
 
-    // TODO: don't require View in Map constructor?
-    NanAssignPersistent(view, view_);
+    if (options->Has(NanNew("view"))) {
+        auto view_ = options->Get(NanNew("view")).As<v8::Object>();
+        NanAssignPersistent(view, view_);
+        map = std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view)->get(), fs, mbgl::MapMode::Still);
+    } else if (options->Has(NanNew("scale"))) {
+        map = std::make_unique<mbgl::Map>(fs, options->Get(NanNew("scale"))->NumberValue(), mbgl::MapMode::Still);
+    }
 
     async->data = this;
 #if UV_VERSION_MAJOR == 0 && UV_VERSION_MINOR <= 10

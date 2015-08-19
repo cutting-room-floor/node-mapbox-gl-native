@@ -21,11 +21,15 @@ function filePath(name) {
 }
 
 function setup(options, callback) {
-    callback(new mbgl.Map(options, new mbgl.View({
-        width: 512,
-        height: 512,
-        ratio: 1.0
-    })));
+    callback(new mbgl.Map({
+        request: options.request,
+        cancel: options.cancel,
+        view: new mbgl.View({
+            width: 512,
+            height: 512,
+            ratio: 1.0
+        })
+    }));
 }
 
 test('Map', function(t) {
@@ -69,12 +73,28 @@ test('Map', function(t) {
             }, /Options object 'cancel' property must be a function/);
 
             options.cancel = function() {};
+            t.throws(function() {
+                new mbgl.Map(options);
+            }, /Options object must have a 'view' or 'scale' property/);
+
             t.doesNotThrow(function() {
-                new mbgl.Map(options, new mbgl.View({
-                    width: 512,
-                    height: 512,
-                    ratio: 1.0
-                }));
+                new mbgl.Map({
+                    request: options.request,
+                    cancel: options.cancel,
+                    view: new mbgl.View({
+                        width: 512,
+                        height: 512,
+                        ratio: 1.0
+                    })
+                });
+            });
+
+            t.doesNotThrow(function() {
+                new mbgl.Map({
+                    request: options.request,
+                    cancel: options.cancel,
+                    scale: 1.0
+                });
             });
 
             t.end();

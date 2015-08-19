@@ -26,13 +26,13 @@ function renderTest(style, info, dir, key) {
         };
         options.cancel = function() {};
 
-        var view = new mbgl.View({
+        options.view = new mbgl.View({
             width: 512,
             height: 512,
             ratio: 1.0
         });
 
-        var map = new mbgl.Map(options, view);
+        var map = new mbgl.Map(options);
         map.load(style);
 
         function render() {

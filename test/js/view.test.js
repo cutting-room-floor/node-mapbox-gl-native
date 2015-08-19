@@ -75,14 +75,14 @@ test('View', function(t) {
         options.request = function() {};
         options.cancel = function() {};
 
-        var view = new mbgl.View({
+        options.view = new mbgl.View({
             width: 512,
             height: 512,
             ratio: 1.0
         });
 
         t.doesNotThrow(function() {
-            new mbgl.Map(options, view);
+            new mbgl.Map(options);
         });
 
         t.end();

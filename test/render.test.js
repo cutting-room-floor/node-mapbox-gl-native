@@ -48,9 +48,9 @@ function renderTest(style, info, base, key) {
         };
         options.cancel = function() {};
 
-        var view = new mbgl.View(info[key]);
+        options.view = new mbgl.View(info[key]);
 
-        var map = new mbgl.Map(options, view);
+        var map = new mbgl.Map(options);
         map.load(style);
 
         map.render(info[key], function(err, data) {

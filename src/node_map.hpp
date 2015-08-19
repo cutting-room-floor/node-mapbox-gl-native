@@ -23,28 +23,30 @@ class NodeMap : public node::ObjectWrap {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Static Node Methods
 public:
-    static void Init(v8::Handle<v8::Object> target);
+    static void Init(v8::Handle<v8::Object>);
     static NAN_METHOD(New);
     static NAN_METHOD(Load);
     static NAN_METHOD(Render);
+    static NAN_METHOD(SetView);
     static NAN_METHOD(Release);
 
-    void startRender(std::unique_ptr<NodeMap::RenderOptions> options);
+    void startRender(std::unique_ptr<NodeMap::RenderOptions>);
     void renderFinished();
 
+    void setView(v8::Handle<v8::Object>);
     void release();
 
     inline bool isLoaded() { return loaded; }
     inline bool isValid() { return valid; }
 
-    static std::unique_ptr<NodeMap::RenderOptions> ParseOptions(v8::Local<v8::Object> obj);
+    static std::unique_ptr<NodeMap::RenderOptions> ParseOptions(v8::Local<v8::Object>);
 
     static v8::Persistent<v8::FunctionTemplate> constructorTemplate;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
 private:
-    NodeMap(v8::Handle<v8::Object>, v8::Handle<v8::Object>);
+    NodeMap(v8::Handle<v8::Object>);
     ~NodeMap();
 
 private:
