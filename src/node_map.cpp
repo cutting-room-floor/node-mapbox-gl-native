@@ -318,7 +318,8 @@ NAN_METHOD(NodeMap::Release) {
 void NodeMap::setView(v8::Handle<v8::Object> view_) {
     NanAssignPersistent(view, view_);
 
-    auto nodeView = node::ObjectWrap::Unwrap<NodeView>(view);
+    auto nodeView = node::ObjectWrap::Unwrap<NodeView>(view_);
+
     map->setView(nodeView->get());
 }
 
@@ -347,7 +348,7 @@ NodeMap::NodeMap(v8::Handle<v8::Object> options) :
     if (options->Has(NanNew("view"))) {
         auto view_ = options->Get(NanNew("view")).As<v8::Object>();
         NanAssignPersistent(view, view_);
-        map = std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view)->get(), fs, mbgl::MapMode::Still);
+        map = std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view_)->get(), fs, mbgl::MapMode::Still);
     } else if (options->Has(NanNew("scale"))) {
         map = std::make_unique<mbgl::Map>(fs, options->Get(NanNew("scale"))->NumberValue(), mbgl::MapMode::Still);
     }
