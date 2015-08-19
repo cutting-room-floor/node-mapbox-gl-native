@@ -78,7 +78,7 @@ test('Map', function(t) {
             }, /Options object must have a 'view' or 'scale' property/);
 
             t.doesNotThrow(function() {
-                new mbgl.Map({
+                var map = new mbgl.Map({
                     request: options.request,
                     cancel: options.cancel,
                     view: new mbgl.View({
@@ -87,18 +87,43 @@ test('Map', function(t) {
                         ratio: 1.0
                     })
                 });
+
+                map.release();
             });
 
             t.doesNotThrow(function() {
-                new mbgl.Map({
+                var map = new mbgl.Map({
                     request: options.request,
                     cancel: options.cancel,
                     scale: 1.0
                 });
+
+                map.release();
             });
 
             t.end();
         });
+
+        t.end();
+    });
+
+    t.test('setView', function(t) {
+        var map = new mbgl.Map({
+            request: function() {},
+            cancel: function() {},
+            scale: 1.0
+        });
+
+
+        t.doesNotThrow(function() {
+            map.setView(new mbgl.View({
+                width: 512,
+                height: 512,
+                ratio: 1.0
+            }));
+        });
+
+        map.release();
 
         t.end();
     });
