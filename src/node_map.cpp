@@ -3,6 +3,7 @@
 #include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/map/still_image.hpp>
 #include <mbgl/util/exception.hpp>
+#include <mbgl/util/image.hpp>
 
 #include <unistd.h>
 
@@ -259,17 +260,17 @@ void NodeMap::renderFinished() {
         result->Set(NanNew("width"), NanNew(img->width));
         result->Set(NanNew("height"), NanNew(img->height));
 
-        v8::Local<v8::Object> pixels = NanNewBufferHandle(
-            reinterpret_cast<char *>(img->pixels.get()),
-            size_t(img->width) * size_t(img->height) * sizeof(mbgl::StillImage::Pixel),
+        std::string* png = new std::string(
+            std::move(mbgl::util::compress_png(img->width, img->height, img->pixels.get())));
 
-            // Retain the StillImage object until the buffer is deleted.
-            [](char *, void *hint) {
-                delete reinterpret_cast<const mbgl::StillImage *>(hint);
-            },
-            const_cast<mbgl::StillImage *>(img.get())
-        );
-        img.release();
+        img.reset();
+
+        auto pngDeleter = [](char *, void *hint) {
+            delete reinterpret_cast<std::string*>(hint);
+        };
+
+        v8::Local<v8::Object> pixels =
+            NanNewBufferHandle(const_cast<char*>(png->data()), png->size(), pngDeleter, png);
 
         result->Set(NanNew("pixels"), pixels);
 

@@ -7,7 +7,6 @@ var mbgl = require('..');
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var PNG = require('pngjs').PNG;
 var compare = require('./compare.js');
 var suitePath = path.dirname(require.resolve('mapbox-gl-test-suite/package.json'));
 
@@ -60,44 +59,39 @@ function renderTest(style, info, base, key) {
             var actual = path.join(dir, 'actual.png');
             var diff = path.join(dir, 'diff.png');
 
-            var png = new PNG({
-                width: data.width,
-                height: data.height
-            });
-
-            png.data = data.pixels;
-
             if (process.env.UPDATE) {
-                png.pack()
-                    .pipe(fs.createWriteStream(expected))
-                    .on('finish', t.end);
+                var wstream = fs.createWriteStream(expected);
+                wstream.on('finish', t.end);
+                wstream.write(data.pixels);
+                wstream.end();
             } else {
-                png.pack()
-                    .pipe(fs.createWriteStream(actual))
-                    .on('finish', function() {
-                        compare(actual, expected, diff, t, function(err, diff) {
-                            t.error(err);
+                var wstream = fs.createWriteStream(actual);
+                wstream.on('finish', function() {
+                    compare(actual, expected, diff, t, function(err, diff) {
+                        t.error(err);
 
-                            var allowed = ('diff' in info) ? info.diff : 0.001;
-                            var color = diff <= allowed ? 'green' : 'red';
+                        var allowed = ('diff' in info) ? info.diff : 0.001;
+                        var color = diff <= allowed ? 'green' : 'red';
 
-                            results += format(resultTemplate, {
-                                name: base,
-                                key: key,
-                                color: color,
-                                error: err ? '<p>' + err + '</p>' : '',
-                                difference: diff,
-                                zoom: info.zoom || 0,
-                                center: info.center || [0, 0],
-                                bearing: info.bearing || 0,
-                                width: info.width || 512,
-                                height: info.height || 512
-                            });
-
-                            t.ok(diff <= allowed, 'actual matches expected');
-                            t.end();
+                        results += format(resultTemplate, {
+                            name: base,
+                            key: key,
+                            color: color,
+                            error: err ? '<p>' + err + '</p>' : '',
+                            difference: diff,
+                            zoom: info.zoom || 0,
+                            center: info.center || [0, 0],
+                            bearing: info.bearing || 0,
+                            width: info.width || 512,
+                            height: info.height || 512
                         });
+
+                        t.ok(diff <= allowed, 'actual matches expected');
+                        t.end();
+                    });
                 });
+                wstream.write(data.pixels);
+                wstream.end();
             }
         });
     };
