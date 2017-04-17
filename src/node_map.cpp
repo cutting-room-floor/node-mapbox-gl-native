@@ -1,6 +1,5 @@
 #include "node_map.hpp"
 
-#include <mbgl/platform/default/headless_display.hpp>
 #include <mbgl/map/still_image.hpp>
 #include <mbgl/util/exception.hpp>
 
@@ -24,11 +23,6 @@ struct NodeMap::RenderOptions {
 
 v8::Persistent<v8::FunctionTemplate> NodeMap::constructorTemplate;
 
-static std::shared_ptr<mbgl::HeadlessDisplay> sharedDisplay() {
-    static auto display = std::make_shared<mbgl::HeadlessDisplay>();
-    return display;
-}
-
 const static char* releasedMessage() {
     return "Map resources have already been released";
 }
@@ -44,13 +38,11 @@ void NodeMap::Init(v8::Handle<v8::Object> target) {
     NODE_SET_PROTOTYPE_METHOD(t, "load", Load);
     NODE_SET_PROTOTYPE_METHOD(t, "render", Render);
     NODE_SET_PROTOTYPE_METHOD(t, "release", Release);
+    NODE_SET_PROTOTYPE_METHOD(t, "setView", SetView);
 
     NanAssignPersistent(constructorTemplate, t);
 
     target->Set(NanNew("Map"), t->GetFunction());
-
-    // Initialize display connection on module load.
-    sharedDisplay();
 }
 
 NAN_METHOD(NodeMap::New) {
@@ -70,8 +62,14 @@ NAN_METHOD(NodeMap::New) {
     if (!options->Has(NanNew("request")) || !options->Get(NanNew("request"))->IsFunction()) {
         return NanThrowError("Options object must have a 'request' method");
     }
+
     if (options->Has(NanNew("cancel")) && !options->Get(NanNew("cancel"))->IsFunction()) {
         return NanThrowError("Options object 'cancel' property must be a function");
+    }
+
+    if ((!options->Has(NanNew("view")) || !NanHasInstance(NodeView::constructorTemplate, options->Get(NanNew("view")))) &&
+        (!options->Has(NanNew("scale")) || !options->Get(NanNew("scale"))->IsNumber())) {
+        return NanThrowTypeError("Options object must have a 'view' or 'scale' property");
     }
 
     try {
@@ -192,7 +190,8 @@ NAN_METHOD(NodeMap::Render) {
 }
 
 void NodeMap::startRender(std::unique_ptr<NodeMap::RenderOptions> options) {
-    map->resize(options->width, options->height, options->ratio);
+    // TODO: throw exception if View ratio and dimensions do not match RenderOptions ratio and dimension
+
     map->setClasses(options->classes);
     map->setLatLngZoom(mbgl::LatLng(options->latitude, options->longitude), options->zoom);
     map->setBearing(options->bearing);
@@ -286,6 +285,20 @@ void NodeMap::renderFinished() {
     }
 }
 
+NAN_METHOD(NodeMap::SetView) {
+    NanScope();
+
+    auto nodeMap = node::ObjectWrap::Unwrap<NodeMap>(args.Holder());
+
+    if (args.Length() < 1 || !NanHasInstance(NodeView::constructorTemplate, args[0])) {
+        return NanThrowTypeError("Requires a View as first argument");
+    }
+
+    nodeMap->setView(args[0].As<v8::Object>());
+
+    NanReturnUndefined();
+}
+
 NAN_METHOD(NodeMap::Release) {
     NanScope();
 
@@ -302,6 +315,14 @@ NAN_METHOD(NodeMap::Release) {
     NanReturnUndefined();
 }
 
+void NodeMap::setView(v8::Handle<v8::Object> view_) {
+    NanAssignPersistent(view, view_);
+
+    auto nodeView = node::ObjectWrap::Unwrap<NodeView>(view_);
+
+    map->setView(nodeView->get());
+}
+
 void NodeMap::release() {
     if (!isValid()) throw mbgl::util::Exception(releasedMessage());
 
@@ -311,6 +332,8 @@ void NodeMap::release() {
         delete reinterpret_cast<uv_async_t *>(handle);
     });
 
+    NanDisposePersistent(view);
+
     map.reset(nullptr);
 }
 
@@ -319,10 +342,16 @@ void NodeMap::release() {
 // Instance
 
 NodeMap::NodeMap(v8::Handle<v8::Object> options) :
-    view(sharedDisplay()),
     fs(options),
-    map(std::make_unique<mbgl::Map>(view, fs, mbgl::MapMode::Still)),
     async(new uv_async_t) {
+
+    if (options->Has(NanNew("view"))) {
+        auto view_ = options->Get(NanNew("view")).As<v8::Object>();
+        NanAssignPersistent(view, view_);
+        map = std::make_unique<mbgl::Map>(*ObjectWrap::Unwrap<NodeView>(view_)->get(), fs, mbgl::MapMode::Still);
+    } else if (options->Has(NanNew("scale"))) {
+        map = std::make_unique<mbgl::Map>(fs, options->Get(NanNew("scale"))->NumberValue(), mbgl::MapMode::Still);
+    }
 
     async->data = this;
 #if UV_VERSION_MAJOR == 0 && UV_VERSION_MINOR <= 10

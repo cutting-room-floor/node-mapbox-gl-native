@@ -14,6 +14,7 @@ void RegisterModule(v8::Handle<v8::Object> exports) {
 
     node_mbgl::NodeMap::Init(exports);
     node_mbgl::NodeRequest::Init(exports);
+    node_mbgl::NodeView::Init(exports);
 
     // Exports Resource constants.
     auto ConstantProperty = static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete);
